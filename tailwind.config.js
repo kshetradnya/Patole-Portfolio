@@ -17,7 +17,7 @@ export default {
         accent: 'var(--accent)',
       },
       backgroundImage: {
-        'topo': "url('/topo.svg')",
+        'topo': "url('topo.svg')",
       }
     },
   },
