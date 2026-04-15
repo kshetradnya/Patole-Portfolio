@@ -5,7 +5,7 @@ import { useAccent } from '../../context/AccentContext';
 
 const MenuOverlay = ({ isOpen, setOpen }) => {
   const { accent } = useAccent();
-  const menuLinks = ["HOME", "ABOUT", "FAMILY", "GALLERY", "CONTACT"];
+  const menuLinks = ["HOME", "FAMILY", "TIMELINE", "GALLERY", "PHILOSOPHY"];
 
   return (
     <AnimatePresence>

@@ -10,11 +10,15 @@ export const familyMembers = [
     accentDark: "#0066ff",
     bio: "Recently completed 10th grade with a passion for technology and code. Currently learning programming languages and building the digital experiences of tomorrow. Creator of this website.",
     achievements: ["Built the Patole Family Portfolio", "Learning Web Development & Programming", "Creative Problem Solver"],
-    skills: [
-      { name: "Web Development", level: 65 },
-      { name: "Programming", level: 55 },
-      { name: "Creative Design", level: 70 },
-      { name: "Problem Solving", level: 60 },
+    projects: [
+      { name: "Patole.in", type: "Personal Portfolio", link: "https://patole.in" },
+      { name: "Family Digital Archive", type: "React Web App", link: "#" },
+      { name: "Future Startup", type: "Incubation", link: "#" }
+    ],
+    socials: [
+      { platform: "Globe", url: "https://patole.in" },
+      { platform: "Github", url: "https://github.com" },
+      { platform: "Mail", url: "mailto:kshetradnyap@gmail.com" }
     ],
     hasCV: true,
     quote: "Every expert was once a beginner.",
@@ -25,16 +29,20 @@ export const familyMembers = [
     surname: "Patole",
     role: "Cyber Security Specialist",
     title: "M.S. Cyber Security • Virginia Tech",
-    image: "/anrunya.png",
+    image: "/anrunya_original.png",
     accent: "#8b5cf6",
     accentDark: "#6d28d9",
     bio: "Master's degree in Cyber Security from Virginia Tech. Dedicated to protecting digital infrastructure and advancing cybersecurity research.",
     achievements: ["Master's from Virginia Tech", "Cyber Security Expertise", "Advanced Research"],
-    skills: [
-      { name: "Cyber Security", level: 90 },
-      { name: "Network Security", level: 85 },
-      { name: "Threat Analysis", level: 80 },
-      { name: "Programming", level: 75 },
+    projects: [
+      { name: "Threat Vector Analysis", type: "Research Paper", link: "#" },
+      { name: "Network Security Protocol", type: "Implementation", link: "#" },
+      { name: "Automated Penetration Toolkit", type: "Software", link: "#" }
+    ],
+    socials: [
+      { platform: "Linkedin", url: "https://linkedin.com" },
+      { platform: "Twitter", url: "https://twitter.com" },
+      { platform: "Mail", url: "mailto:hello@patole.family" }
     ],
     hasCV: false,
     quote: "Security is not a product, but a process.",
@@ -43,18 +51,21 @@ export const familyMembers = [
     id: "vivek",
     name: "Vivek",
     surname: "Patole",
-    role: "Vice President, Tata Projects",
-    title: "VP • Tata Projects",
+    role: "VP – Central Engineering, Tata Projects",
+    title: "VP • Tata Projects Limited",
     image: "/vivek.png",
     accent: "#f59e0b",
     accentDark: "#d97706",
-    bio: "Vice President at Tata Projects, leading major infrastructure and engineering projects across India. A visionary leader with decades of industry experience.",
+    bio: "Vice President – Central Engineering at Tata Projects Limited with over three decades of experience in the EPC industry. Specializes in steel-intensive infrastructure, industrial, and energy projects using advanced digital tools like BIM.",
     achievements: ["Vice President at Tata Projects", "Infrastructure Leadership", "Decades of Engineering Excellence"],
-    skills: [
-      { name: "Project Management", level: 95 },
-      { name: "Leadership", level: 90 },
-      { name: "Engineering", level: 85 },
-      { name: "Strategic Planning", level: 88 },
+    projects: [
+      { name: "BIM-Driven Infrastructure", type: "Tata Projects – Digital Engineering", link: "https://www.tataprojects.com" },
+      { name: "Steel-Intensive EPC Execution", type: "Industrial & Energy Projects", link: "#" },
+      { name: "Advanced Specification Systems", type: "Design & Engineering", link: "#" }
+    ],
+    socials: [
+      { platform: "Linkedin", url: "https://linkedin.com" },
+      { platform: "Mail", url: "mailto:vivek@patole.family" }
     ],
     hasCV: false,
     quote: "Leadership is about making others better as a result of your presence.",
@@ -63,18 +74,21 @@ export const familyMembers = [
     id: "bhavana",
     name: "Bhavana",
     surname: "Patole",
-    role: "SIAC Director & HOD",
-    title: "Director SIAC • HOD, Elphinstone Dept.",
-    image: "/bhavana.png",
+    role: "Director, SIAC Mumbai",
+    title: "Director SIAC • Elphinstone College, Dept. of History",
+    image: "/bhavana_original.png",
     accent: "#10b981",
     accentDark: "#059669",
-    bio: "SIAC Director and Head of Department at Elphinstone. A pillar of academic leadership and educational excellence, shaping the future of institutions and students alike.",
-    achievements: ["SIAC Director", "HOD at Elphinstone Department", "Academic Leadership"],
-    skills: [
-      { name: "Academic Leadership", level: 92 },
-      { name: "Administration", level: 88 },
-      { name: "Research", level: 80 },
-      { name: "Mentorship", level: 95 },
+    bio: "Director of the State Institute for Administrative Careers (SIAC), Mumbai – a government institute providing coaching for UPSC Civil Services examinations. Previously with Elphinstone College's Department of History, her research interests include social reform and administrative leadership in Maharashtra.",
+    achievements: ["SIAC Director", "Elphinstone College, Dept. of History", "Published Researcher"],
+    projects: [
+      { name: "In the Age of Awakening: The Role of Dnyanodaya", type: "European Academic Research, Vol. I, 2014", link: "#" },
+      { name: "Leadership of Yashwantrao Chavan in Modern Maharashtra", type: "Golden Research Thoughts", link: "#" },
+      { name: "UPSC Civil Services Coaching Program", type: "SIAC Mumbai – Administration", link: "#" }
+    ],
+    socials: [
+      { platform: "Linkedin", url: "https://linkedin.com" },
+      { platform: "Mail", url: "mailto:bhavana@patole.family" }
     ],
     hasCV: false,
     quote: "Education is the most powerful weapon to change the world.",
