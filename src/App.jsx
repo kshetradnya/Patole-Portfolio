@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { AccentProvider } from './context/AccentContext';
 import Navbar from './components/layout/Navbar';
 import AnimatedHeading from './components/ui/AnimatedHeading';
@@ -23,31 +23,8 @@ import ParticleBackground from './components/effects/ParticleBackground';
 import KonamiEaster from './components/effects/KonamiEaster';
 import { familyMembers } from './data/familyData';
 import { motion } from 'framer-motion';
-import ProfessionalPortfolio from './components/sections/ProfessionalPortfolio';
 
 function App() {
-  const [showProfessional, setShowProfessional] = useState(false);
-  const [startxSeq, setStartxSeq] = useState([]);
-
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (showProfessional) return; // Ignore if already shown
-      setStartxSeq(prev => {
-        const next = [...prev, e.key].slice(-6);
-        if (next.join('').toLowerCase() === 'startx') {
-          setShowProfessional(true);
-        }
-        return next;
-      });
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [showProfessional]);
-
-  if (showProfessional) {
-    return <ProfessionalPortfolio onExit={() => setShowProfessional(false)} />;
-  }
-
   return (
     <AccentProvider>
       <div className="min-h-screen">
@@ -113,13 +90,6 @@ function App() {
                 A legacy of <span className="text-accent-italic text-accent lowercase text-xl md:text-2xl mx-1 transition-colors duration-500">excellence</span>
               </p>
             </motion.div>
-
-            {/* Creative startx hint */}
-            <div className="absolute right-6 bottom-12 font-mono text-[var(--accent)]/60 text-xs tracking-[0.2em] z-50 flex items-center gap-2 group cursor-crosshair">
-               <span className="w-2 h-2 bg-[var(--accent)] rounded-full animate-ping"></span>
-               <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">SYSTEM REQ:</span>
-               <span>type 'startx' to load developer environment</span>
-            </div>
           </section>
 
           {/* Animated Number Stats */}

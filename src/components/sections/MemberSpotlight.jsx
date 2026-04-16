@@ -113,28 +113,28 @@ const MemberSpotlight = ({ member, isAlternate }) => {
               {member.bio}
             </p>
 
-            <div className="pt-8 space-y-4">
-              <h5 className="font-anton tracking-wider text-xl mb-4 opacity-70">FEATURED WORKS</h5>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="pt-8 space-y-2">
+              <h5 className="font-anton tracking-wider text-xl mb-6">FEATURED WORKS</h5>
+              <div className="flex flex-col border-t border-current/10">
                 {member.projects?.map((proj) => (
                   <a 
                     key={proj.name} 
                     href={proj.link}
                     target={proj.link !== '#' ? "_blank" : undefined}
                     rel="noreferrer"
-                    className="group relative flex flex-col p-6 rounded-2xl overflow-hidden border border-current/5 hover:border-current/20 transition-all duration-500 cursor-pointer"
-                    style={{ backgroundColor: "rgba(128, 128, 128, 0.03)" }}
+                    className="group flex flex-col sm:flex-row sm:items-center justify-between py-6 border-b border-current/10 hover:px-6 transition-all duration-500 cursor-pointer"
                   >
-                    <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500" style={{ backgroundColor: member.accent }}></div>
-                    <span className="font-inter text-[0.65rem] font-bold uppercase tracking-[0.2em] opacity-50 mb-3">
-                      {proj.type}
-                    </span>
-                    <span className="font-anton text-2xl group-hover:text-[var(--accent)] transition-colors duration-300 relative z-10 leading-tight">
-                      {proj.name}
-                    </span>
-                    <div className="mt-8 self-end opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all duration-500 max-sm:opacity-100 max-sm:translate-x-0 relative z-10">
-                      <ArrowIcon color={member.accent} />
+                    <div className="flex flex-col">
+                      <span className="font-anton text-2xl group-hover:text-[var(--accent)] transition-colors duration-300">
+                        {proj.name}
+                      </span>
+                      <span className="font-inter text-xs uppercase tracking-widest opacity-50 mt-1">
+                        {proj.type}
+                      </span>
                     </div>
+                    <span className="opacity-0 -translate-x-4 translate-y-4 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-500 max-sm:hidden">
+                      <ArrowIcon color={member.accent} />
+                    </span>
                   </a>
                 ))}
               </div>
