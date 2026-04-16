@@ -15,9 +15,9 @@ const QuotesCarousel = () => {
   const prev = () => setCurrent((c) => (c - 1 + quotes.length) % quotes.length);
 
   return (
-    <section className="py-32 px-8 bg-cream relative z-20">
+    <section className="py-20 px-6 bg-cream relative z-20">
       <div className="max-w-4xl mx-auto text-center relative min-h-[300px] flex flex-col items-center justify-center">
-        <p className="font-inter uppercase tracking-[0.3em] text-xs text-dark/40 mb-12">Words We Live By</p>
+        <p className="font-inter uppercase tracking-[0.3em] text-[10px] md:text-xs text-dark/40 mb-8 md:mb-12">Words We Live By</p>
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -28,7 +28,7 @@ const QuotesCarousel = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center"
           >
-            <p className="font-playfair italic text-3xl md:text-5xl text-dark leading-tight max-w-3xl">
+            <p className="font-playfair italic text-2xl md:text-5xl text-dark leading-tight max-w-3xl px-2">
               "{quotes[current].text}"
             </p>
             <div className="mt-10 flex flex-col items-center gap-1">

@@ -24,8 +24,8 @@ body {
 .text-massive {
   font-family: 'Anton', sans-serif;
   text-transform: uppercase;
-  font-size: clamp(4rem, 12vw, 10rem);
-  line-height: 0.9;
+  font-size: clamp(3rem, 10vw, 10rem);
+  line-height: 0.95;
   letter-spacing: -0.02em;
 }
 

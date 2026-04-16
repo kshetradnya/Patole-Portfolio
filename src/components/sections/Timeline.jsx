@@ -14,33 +14,35 @@ const timelineData = [
 
 const Timeline = () => {
   return (
-    <section className="py-32 px-8 bg-cream relative z-20" id="timeline">
+    <section className="py-20 md:py-32 px-4 md:px-8 bg-cream relative z-20" id="timeline">
       <div className="max-w-5xl mx-auto">
-        <AnimatedHeading className="text-[clamp(3rem,6vw,5rem)] text-dark mb-24" text1="OUR" text2="JOURNEY" />
+        <AnimatedHeading className="text-[clamp(2.5rem,8vw,5rem)] text-dark mb-16 md:mb-24" text1="OUR" text2="JOURNEY" />
 
         <div className="relative">
-          {/* Center line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-px bg-dark/10 -translate-x-1/2 hidden md:block" />
+          {/* Vertical line - responsive position */}
+          <div className="absolute left-[18px] md:left-1/2 top-0 bottom-0 w-px bg-dark/10 -translate-x-1/2" />
 
           {timelineData.map((item, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -60 : 60 }}
+              initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className={`relative flex flex-col md:flex-row items-center mb-16 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+              className={`relative flex flex-col md:flex-row items-start md:items-center mb-12 md:mb-16 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
             >
               {/* Content */}
-              <div className={`w-full md:w-5/12 ${i % 2 === 0 ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'}`}>
-                <span className="font-anton text-5xl" style={{ color: item.accent }}>{item.year}</span>
-                <h4 className="font-anton text-xl mt-2 text-dark">{item.title}</h4>
-                <p className="font-inter text-dark/60 text-sm mt-2">{item.desc}</p>
+              <div className={`w-full md:w-5/12 pl-12 md:pl-0 ${i % 2 === 0 ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'}`}>
+                <span className="font-anton text-4xl md:text-5xl" style={{ color: item.accent }}>{item.year}</span>
+                <h4 className="font-anton text-lg md:text-xl mt-1 md:mt-2 text-dark uppercase tracking-tight">{item.title}</h4>
+                <p className="font-inter text-dark/60 text-xs md:text-sm mt-1 md:mt-2 max-w-sm md:max-w-none ml-0 md:ml-auto">{item.desc}</p>
               </div>
 
-              {/* Center dot */}
-              <div className="w-2/12 flex justify-center my-4 md:my-0">
-                <div className="w-4 h-4 rounded-full border-4 bg-cream z-10" style={{ borderColor: item.accent }} />
+              {/* Center/Left dot */}
+              <div className="absolute left-0 md:relative md:left-auto md:w-2/12 flex justify-center py-2 md:py-0">
+                <div className="w-9 h-9 md:w-4 md:h-4 rounded-full border-4 bg-cream z-10 flex items-center justify-center" style={{ borderColor: item.accent }}>
+                    <div className="w-2 h-2 rounded-full md:hidden" style={{ backgroundColor: item.accent }} />
+                </div>
               </div>
 
               {/* Spacer for alternating */}

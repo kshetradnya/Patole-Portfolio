@@ -33,8 +33,8 @@ const AnimatedCounter = ({ target, suffix }) => {
 
 const NumberCounter = () => {
   return (
-    <div className="w-full py-20 px-8">
-      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div className="w-full py-12 px-4">
+      <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
         {stats.map((stat, i) => (
           <motion.div
             key={i}

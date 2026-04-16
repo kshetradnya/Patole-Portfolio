@@ -73,10 +73,10 @@ const badges = [
 
 const AchievementBadges = () => {
   return (
-    <section className="py-24 px-8 bg-dark relative z-20">
+    <section className="py-16 md:py-24 px-4 md:px-8 bg-dark relative z-20">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-anton text-[clamp(2rem,5vw,4rem)] text-cream text-center mb-16 tracking-tight">ACHIEVEMENT WALL</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <h2 className="font-anton text-[clamp(1.5rem,5vw,4rem)] text-cream text-center mb-12 md:mb-16 tracking-tight">ACHIEVEMENT WALL</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {badges.map((badge, i) => (
             <motion.div
               key={i}
@@ -85,7 +85,7 @@ const AchievementBadges = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
               whileHover={{ scale: 1.08, rotate: 2 }}
-              className="relative group flex flex-col items-center text-center p-8 rounded-2xl border border-cream/10 bg-cream/5 hover:bg-cream/10 transition-all duration-300 cursor-default"
+              className="relative group flex flex-col items-center text-center p-5 md:p-8 rounded-2xl border border-cream/10 bg-cream/5 hover:bg-cream/10 transition-all duration-300 cursor-default"
             >
               <div className="mb-5 opacity-80 group-hover:opacity-100 transition-opacity duration-300" style={{ color: badge.color }}>
                 <BadgeIcon type={badge.icon} />

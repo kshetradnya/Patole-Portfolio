@@ -13,7 +13,7 @@ const PhilosophySection = () => {
   const opacity = useTransform(scrollYProgress, [0.2, 0.5, 0.8], [0, 1, 0]);
 
   return (
-    <section ref={containerRef} className="min-h-screen bg-dark text-cream py-32 px-8 relative z-20 flex flex-col items-center justify-center overflow-hidden rounded-t-[48px] -mt-10" id="philosophy">
+    <section ref={containerRef} className="min-h-screen bg-dark text-cream py-20 px-4 md:py-32 md:px-8 relative z-20 flex flex-col items-center justify-center overflow-hidden rounded-t-[32px] md:rounded-t-[48px] -mt-10" id="philosophy">
       
       {/* Background Elements */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -25,7 +25,7 @@ const PhilosophySection = () => {
         <motion.p 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          className="font-inter uppercase tracking-[0.5em] text-sm opacity-60 mb-12"
+          className="font-inter uppercase tracking-[0.3em] md:tracking-[0.5em] text-[10px] md:text-sm opacity-60 mb-8 md:mb-12"
         >
           The House of Patole
         </motion.p>
@@ -33,21 +33,21 @@ const PhilosophySection = () => {
         <div className="relative">
           <motion.h2 
             style={{ y: y1 }}
-            className="font-anton text-[clamp(3rem,8vw,10rem)] leading-[0.8] uppercase tracking-tighter mix-blend-difference z-20 relative"
+            className="font-anton text-[clamp(2.5rem,10vw,10rem)] leading-[0.85] uppercase tracking-tighter mix-blend-difference z-20 relative"
           >
             PIONEERING THE
           </motion.h2>
           
           <motion.div 
             style={{ opacity }}
-            className="font-playfair italic text-[clamp(2rem,5vw,6rem)] text-[var(--accent)] leading-none my-8 z-10 relative"
+            className="font-playfair italic text-[clamp(1.5rem,6vw,6rem)] text-[var(--accent)] leading-none my-6 md:my-8 z-10 relative"
           >
             Digital & Physical
           </motion.div>
 
           <motion.h2 
             style={{ y: y2 }}
-            className="font-anton text-[clamp(3rem,8vw,10rem)] leading-[0.8] uppercase tracking-tighter mix-blend-difference z-20 relative"
+            className="font-anton text-[clamp(2.5rem,10vw,10rem)] leading-[0.85] uppercase tracking-tighter mix-blend-difference z-20 relative"
           >
             FRONTIERS.
           </motion.h2>
@@ -57,7 +57,7 @@ const PhilosophySection = () => {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
-          className="mt-32 max-w-2xl text-lg font-inter opacity-70 leading-relaxed"
+          className="mt-16 md:mt-32 max-w-2xl text-base md:text-lg font-inter opacity-70 leading-relaxed px-4"
         >
           From the structural integrity of national infrastructure to the bleeding edge of cyber security, academic excellence, and modern web experiences. The Patole family brings absolute dedication and fearless innovation to everything we touch.
         </motion.div>

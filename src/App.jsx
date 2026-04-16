@@ -45,16 +45,32 @@ function App() {
             
             {/* Scattered family names background */}
             <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
-              {['KSHETRADNYA', 'ANRUNYA', 'VIVEK', 'BHAVANA', 'PATOLE', 'KSHETRADNYA', 'VIVEK', 'BHAVANA', 'ANRUNYA', 'PATOLE', 'PATOLE', 'KSHETRADNYA'].map((name, i) => (
+              {['KSHETRADNYA', 'ANRUNYA', 'VIVEK', 'BHAVANA', 'PATOLE', 'KSHETRADNYA'].map((name, i) => (
                 <span
                   key={i}
-                  className="absolute font-anton text-dark/[0.03] whitespace-nowrap"
+                  className="absolute font-anton text-dark/[0.03] whitespace-nowrap hidden sm:block"
                   style={{
                     fontSize: `${Math.random() * 3 + 1.5}rem`,
-                    top: `${(i * 8.5) % 100}%`,
+                    top: `${(i * 15) % 100}%`,
                     left: `${((i * 37 + 13) % 100)}%`,
                     transform: `rotate(${(i % 2 === 0 ? -1 : 1) * (5 + i * 3)}deg)`,
                     letterSpacing: '0.15em',
+                  }}
+                >
+                  {name}
+                </span>
+              ))}
+              {/* Mobile version - fewer names */}
+              {['PATOLE', 'KSHETRADNYA', 'VIVEK'].map((name, i) => (
+                <span
+                  key={`mb-${i}`}
+                  className="absolute font-anton text-dark/[0.02] whitespace-nowrap sm:hidden"
+                  style={{
+                    fontSize: `2.5rem`,
+                    top: `${20 + (i * 25)}%`,
+                    left: `${(i * 10)}%`,
+                    transform: `rotate(-15deg)`,
+                    letterSpacing: '0.1em',
                   }}
                 >
                   {name}
@@ -68,10 +84,10 @@ function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 1 }}
-              className="mt-8 text-center px-4 relative z-10"
+              className="mt-8 text-center px-6 relative z-10"
             >
-              <p className="text-lg md:text-xl font-inter text-dark/70 tracking-widest uppercase">
-                A legacy of <span className="text-accent-italic text-accent lowercase text-2xl mx-1 transition-colors duration-500">excellence</span>
+              <p className="text-base md:text-xl font-inter text-dark/70 tracking-widest uppercase leading-loose">
+                A legacy of <span className="text-accent-italic text-accent lowercase text-xl md:text-2xl mx-1 transition-colors duration-500">excellence</span>
               </p>
             </motion.div>
           </section>

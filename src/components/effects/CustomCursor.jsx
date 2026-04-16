@@ -19,7 +19,7 @@ const CustomCursor = () => {
     <>
       {/* Outer blurred glow */}
       <motion.div
-        className="fixed top-0 left-0 w-64 h-64 rounded-full pointer-events-none z-0 mix-blend-screen opacity-30"
+        className="fixed top-0 left-0 w-64 h-64 rounded-full pointer-events-none z-0 mix-blend-screen opacity-30 hidden sm:block"
         animate={{
           x: mousePosition.x - 128,
           y: mousePosition.y - 128,

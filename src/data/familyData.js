@@ -76,7 +76,7 @@ export const familyMembers = [
     surname: "Patole",
     role: "Director, SIAC Mumbai",
     title: "Director SIAC • Elphinstone College, Dept. of History",
-    image: "bhavana_original.png",
+    image: "bhavana.png",
     accent: "#10b981",
     accentDark: "#059669",
     bio: "Director of the State Institute for Administrative Careers (SIAC), Mumbai – a government institute providing coaching for UPSC Civil Services examinations. Previously with Elphinstone College's Department of History, her research interests include social reform and administrative leadership in Maharashtra.",

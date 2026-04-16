@@ -64,11 +64,11 @@ const MemberSpotlight = ({ member, isAlternate }) => {
     <section 
       ref={containerRef}
       id={member.id}
-      className={`min-h-screen py-32 px-8 relative flex flex-col justify-center ${isAlternate ? 'bg-dark text-cream' : 'bg-cream text-dark'}`}
+      className={`min-h-screen py-20 md:py-32 px-4 md:px-12 relative flex flex-col justify-center ${isAlternate ? 'bg-dark text-cream' : 'bg-cream text-dark'}`}
     >
       <div className="max-w-7xl mx-auto w-full">
         <AnimatedHeading 
-          className="text-[clamp(4rem,10vw,8rem)]" 
+          className="text-[clamp(2.5rem,12vw,8rem)]" 
           text1={member.name} 
           text2={member.surname}
           style1={{ color: isAlternate ? member.accent : member.accentDark }}
@@ -105,8 +105,8 @@ const MemberSpotlight = ({ member, isAlternate }) => {
               )}
             </div>
 
-            <h4 className="font-playfair italic text-3xl md:text-5xl leading-tight">
-              A commitment to <br/>
+            <h4 className="font-playfair italic text-2xl md:text-5xl leading-tight">
+              A commitment to <br className="hidden md:block"/>
               <span style={{ color: member.accent }}>outstanding achievements</span>
             </h4>
             <p className="font-inter text-lg opacity-80 max-w-lg leading-relaxed">

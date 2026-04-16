@@ -3,11 +3,11 @@ import AnimatedHeading from '../ui/AnimatedHeading';
 
 const GallerySection = () => {
   return (
-    <section className="min-h-screen bg-dark text-cream py-32 px-8 rounded-t-[48px] -mt-10 relative z-20" id="gallery">
+    <section className="min-h-screen bg-dark text-cream py-20 px-4 md:py-32 md:px-8 rounded-t-[32px] md:rounded-t-[48px] -mt-10 relative z-20" id="gallery">
       <div className="max-w-7xl mx-auto flex flex-col items-center">
-        <AnimatedHeading className="text-[clamp(3rem,8vw,6rem)]" text1="MOMENTS &" text2="MEMORIES" />
+        <AnimatedHeading className="text-[clamp(2.5rem,8vw,6rem)]" text1="MOMENTS &" text2="MEMORIES" />
         
-        <div className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+        <div className="mt-12 md:mt-20 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 w-full">
           {/* Quick placeholders for the gallery */}
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div 

@@ -33,7 +33,7 @@ const TiltCard = ({ member, setAccent, setAccentDark }) => {
         transformStyle: "preserve-3d",
         transition: "transform 0.1s ease-out"
       }}
-      className="p-8 border border-cream/10 rounded-3xl glass text-cream hover:border-cream/30 group cursor-pointer relative overflow-hidden"
+      className="p-6 md:p-8 border border-cream/10 rounded-3xl glass text-cream hover:border-cream/30 group cursor-pointer relative overflow-hidden"
       onMouseEnter={() => {
         setAccent(member.accent);
         setAccentDark(member.accentDark);
@@ -48,12 +48,12 @@ const TiltCard = ({ member, setAccent, setAccentDark }) => {
       ></div>
 
       <div className="relative z-10" style={{ transform: "translateZ(75px)" }}>
-        <h3 className="font-anton text-5xl mb-2 transition-colors duration-500" style={{ color: "white" }}>
+        <h3 className="font-anton text-4xl md:text-5xl mb-2 transition-colors duration-500" style={{ color: "white" }}>
           <span className="group-hover:text-[var(--accent)] transition-colors duration-500">{member.name}</span>
           <br />{member.surname}
         </h3>
-        <p className="font-inter text-cream/70 mb-8 uppercase tracking-widest text-sm opacity-80">{member.title}</p>
-        <p className="font-playfair italic text-2xl text-cream/90 group-hover:text-cream transition-colors duration-300">"{member.quote}"</p>
+        <p className="font-inter text-cream/70 mb-8 uppercase tracking-widest text-xs md:text-sm opacity-80">{member.title}</p>
+        <p className="font-playfair italic text-xl md:text-2xl text-cream/90 group-hover:text-cream transition-colors duration-300">"{member.quote}"</p>
         
         <div className="mt-8 flex items-center gap-4">
           <span className="text-sm font-bold tracking-widest uppercase transition-colors duration-500 group-hover:text-[var(--accent)]">Explore Profile</span>
@@ -68,11 +68,11 @@ const FamilyOverview = () => {
   const { setAccent, setAccentDark } = useAccent();
 
   return (
-    <section className="min-h-screen bg-dark py-24 px-8 rounded-[48px] -mt-10 relative z-20 overflow-visible" id="family" style={{ perspective: "1500px" }}>
+    <section className="min-h-screen bg-dark py-20 px-4 md:py-24 md:px-8 rounded-[32px] md:rounded-[48px] -mt-10 relative z-20 overflow-visible" id="family" style={{ perspective: "1500px" }}>
       <div className="max-w-7xl mx-auto flex flex-col items-center">
-        <AnimatedHeading className="text-[clamp(3rem,8vw,6rem)] text-cream" text1="MEET THE" text2="FAMILY" />
+        <AnimatedHeading className="text-[clamp(2.5rem,8vw,6rem)] text-cream" text1="MEET THE" text2="FAMILY" />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 w-full mt-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 w-full mt-16 md:mt-24">
           {familyMembers.map((member) => (
             <TiltCard 
               key={member.id} 
