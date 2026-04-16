@@ -15,7 +15,7 @@ const HorizontalGallery = () => {
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-75%"]);
 
   const items = [
-    { id: 1, title: "CYBER SECURITY", subtitle: "Defending the digital frontier.", owner: "Anrunya" },
+    { id: 1, title: "DATA & CYBER ANALYTICS", subtitle: "Defending the digital frontier with data.", owner: "Anrunya" },
     { id: 2, title: "INFRASTRUCTURE", subtitle: "Building modern marvels.", owner: "Vivek" },
     { id: 3, title: "ACADEMICS", subtitle: "Inspiring the next generation.", owner: "Bhavana" },
     { id: 4, title: "WEB DESIGN", subtitle: "Crafting digital experiences.", owner: "Kshetradnya" }

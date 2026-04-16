@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const quotes = [
   { text: "Every expert was once a beginner.", author: "Kshetradnya Patole", role: "Student & Web Developer", color: "#00d4ff" },
-  { text: "Security is not a product, but a process.", author: "Anrunya Patole", role: "Cyber Security Specialist", color: "#8b5cf6" },
+  { text: "Security is not a product, but a process.", author: "Anrunya Patole", role: "Cyber Security & Data Science Specialist", color: "#8b5cf6" },
   { text: "Leadership is about making others better as a result of your presence.", author: "Vivek Patole", role: "VP, Tata Projects", color: "#f59e0b" },
   { text: "Education is the most powerful weapon to change the world.", author: "Bhavana Patole", role: "SIAC Director & HOD", color: "#10b981" },
 ];

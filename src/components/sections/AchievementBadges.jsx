@@ -61,11 +61,11 @@ const BadgeIcon = ({ type }) => {
 };
 
 const badges = [
-  { icon: "graduation", title: "Virginia Tech M.S.", member: "Anrunya", color: "#8b5cf6" },
+  { icon: "graduation", title: "Virginia Tech MS-GBA", member: "Anrunya", color: "#8b5cf6" },
   { icon: "building", title: "VP Tata Projects", member: "Vivek", color: "#f59e0b" },
   { icon: "compass", title: "SIAC Director", member: "Bhavana", color: "#10b981" },
   { icon: "code", title: "Portfolio Creator", member: "Kshetradnya", color: "#00d4ff" },
-  { icon: "shield", title: "Cyber Security Expert", member: "Anrunya", color: "#8b5cf6" },
+  { icon: "shield", title: "CSDS NMIMS & BIT CMA", member: "Anrunya", color: "#8b5cf6" },
   { icon: "network", title: "Engineering Excellence", member: "Vivek", color: "#f59e0b" },
   { icon: "book", title: "HOD Elphinstone", member: "Bhavana", color: "#10b981" },
   { icon: "globe", title: "Web Developer", member: "Kshetradnya", color: "#00d4ff" },

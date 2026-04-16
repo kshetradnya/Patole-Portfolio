@@ -5,7 +5,7 @@ import AnimatedHeading from '../ui/AnimatedHeading';
 const timelineData = [
   { year: "1985", title: "Vivek begins engineering career", desc: "Foundation of decades of infrastructure leadership.", accent: "#f59e0b" },
   { year: "1995", title: "Bhavana enters academia", desc: "Beginning of a journey in educational excellence.", accent: "#10b981" },
-  { year: "2018", title: "Anrunya starts at Virginia Tech", desc: "Masters in Cyber Security from a world-class institution.", accent: "#8b5cf6" },
+  { year: "2018", title: "Anrunya begins BTech at NMIMS", desc: "Foundation in Computer Science and Data Science (CSDS), leading to advanced studies (MS-GBA & BIT CMA) at Virginia Tech.", accent: "#8b5cf6" },
   { year: "2023", title: "Vivek becomes VP at Tata Projects", desc: "A milestone in infrastructure leadership.", accent: "#f59e0b" },
   { year: "2024", title: "Kshetradnya completes Class 10", desc: "Graduating with a fire for web development.", accent: "#00d4ff" },
   { year: "2025", title: "Bhavana appointed SIAC Director", desc: "Academic leadership at the highest level.", accent: "#10b981" },
