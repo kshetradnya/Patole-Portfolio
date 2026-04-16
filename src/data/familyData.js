@@ -11,7 +11,7 @@ export const familyMembers = [
     bio: "Recently completed 10th grade with a passion for technology and code. Currently learning programming languages and building the digital experiences of tomorrow. Creator of this website.",
     achievements: ["Built the Patole Family Portfolio", "Learning Web Development & Programming", "Creative Problem Solver"],
     projects: [
-      { name: "Patole.in", type: "Personal Portfolio", link: "https://patole.in" },
+      { name: "Japanese Learning Hub", type: "Language App", link: "#" },
       { name: "Family Digital Archive", type: "React Web App", link: "#" },
       { name: "Future Startup", type: "Incubation", link: "#" }
     ],
