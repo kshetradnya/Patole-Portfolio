@@ -98,8 +98,8 @@ const CurveConnection = ({ startX, startY, endX, endY, type, isFocused }) => {
       stroke={isFocused ? "var(--accent)" : "rgba(255,255,255,0.15)"}
       strokeWidth={isFocused ? "4" : "2"}
       fill="none"
-      initial={{ pathLength: 0 }}
-      whileInView={{ pathLength: 1 }}
+      initial={{ pathLength: 0, opacity: 0 }}
+      animate={{ pathLength: 1, opacity: 1 }}
       transition={{ duration: 1.5, ease: "easeInOut" }}
       className="transition-colors duration-500"
     />
@@ -212,17 +212,19 @@ const FamilyTreeSection = () => {
 
       {/* Workspace Container for Zoom & Pan */}
       {/* F37: Draggable Grab Cursor interactions */}
-      <div className="relative w-full flex-grow overflow-hidden cursor-grab active:cursor-grabbing border-y border-cream/5" style={{ minHeight: '80vh' }}>
+      <div className="relative w-full flex-grow overflow-hidden cursor-grab active:cursor-grabbing border-y border-cream/5 flex justify-center" style={{ minHeight: '80vh' }}>
         
-        <motion.div 
-          ref={workspaceRef}
-          drag
-          dragConstraints={{ left: -canvasW/2, right: canvasW/2, top: -canvasH/2, bottom: canvasH/2 }}
-          dragElastic={0.1}
-          animate={{ scale }}
-          style={{ width: canvasW, height: canvasH, originX: 0.5, originY: 0.2 }}
-          className="absolute left-1/2 top-0 -translate-x-1/2"
-        >
+        {/* Centering Wrapper to avoid fighting framer-motion transform */}
+        <div className="relative w-0 h-0 top-[40vh] left-1/2">
+          <motion.div 
+            ref={workspaceRef}
+            drag
+            dragConstraints={{ left: -1000, right: 1000, top: -800, bottom: 800 }}
+            dragElastic={0.1}
+            animate={{ scale, x: 0, y: 0 }}
+            style={{ width: canvasW, height: canvasH, left: -canvasW/2, top: -canvasH/4 }}
+            className="absolute origin-top"
+          >
           {/* F32: Generation Depth Background Labels */}
           <div className="absolute inset-0 pointer-events-none flex flex-col justify-between">
              <div className="h-[400px] flex items-center justify-center border-b border-cream/5 relative"><span className="absolute left-10 font-anton text-[8rem] text-white/[0.02]">GEN I</span></div>
@@ -300,7 +302,8 @@ const FamilyTreeSection = () => {
             </>
           )}
 
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
 
       {/* F7: Click-to-Expand Detail Panel */}
@@ -340,8 +343,7 @@ const PedigreeNode = ({ member, pos, onClick, onHover, opacity }) => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
-      whileInView={{ opacity, scale: 1 }}
-      animate={{ opacity }}
+      animate={{ opacity, scale: 1 }}
       transition={{ duration: 0.5 }}
       onMouseEnter={() => onHover(member.id)}
       onMouseLeave={() => onHover(null)}
