@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-const sections = ['home', 'family', 'kshetradnya', 'anrunya', 'vivek', 'bhavana', 'timeline', 'philosophy'];
+const sections = ['home', 'family', 'kshetradnya', 'anrunya', 'vivek', 'bhavana', 'timeline', 'gallery', 'legacy-tree', 'philosophy'];
 
 const SectionDots = () => {
   const [activeSection, setActiveSection] = useState('home');
