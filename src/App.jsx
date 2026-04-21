@@ -104,9 +104,6 @@ function App() {
           {/* Family Overview Section */}
           <FamilyOverview />
 
-          {/* Family Tree Section */}
-          <FamilyTreeSection />
-
           {/* Member Spotlights */}
           {familyMembers.map((member, index) => (
             <MemberSpotlight 
@@ -135,6 +132,9 @@ function App() {
 
           {/* Moments & Memories */}
           <GallerySection />
+
+          {/* Majestic Pedigree Family Tree */}
+          <FamilyTreeSection />
 
           {/* Core Philosophy Manifesto */}
           <PhilosophySection />

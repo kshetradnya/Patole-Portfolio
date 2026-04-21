@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
-import { familyMembers } from '../../data/familyData';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { pedigreeData } from '../../data/extendedFamilyData';
 import { useAccent } from '../../context/AccentContext';
 
-// Manual SVG Icons to match MemberSpotlight pattern (removing lucide-react dependency)
+// Manual SVG Icons
 const Icons = {
   Zap: (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -42,197 +42,268 @@ const Icons = {
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
     </svg>
+  ),
+  Search: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+  ),
+  ZoomIn: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+    </svg>
+  ),
+  ZoomOut: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/>
+    </svg>
+  ),
+  Reset: (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+    </svg>
   )
 };
 
-// Feature 1: Dynamic Tree Structure Data
-const treeStructure = {
-  id: 'root',
-  name: 'Parents',
-  children: [
-    { id: 'vivek', role: 'father' },
-    { id: 'bhavana', role: 'mother' },
-    { id: 'anrunya', role: 'daughter' },
-    { id: 'kshetradnya', role: 'son' }
-  ]
+const getRoleIcon = (id) => {
+  if (id.includes('g-father')) return Icons.Zap;
+  if (id.includes('mother')) return Icons.BookOpen;
+  if (id === 'vivek') return Icons.Zap;
+  if (id === 'bhavana') return Icons.BookOpen;
+  if (id === 'anrunya') return Icons.Shield;
+  if (id === 'kshetradnya') return Icons.Laptop;
+  return Icons.Zap;
 };
 
-// Feature 12: Role-Specific Badges Mapping
-const getRoleIcon = (id) => {
-  switch (id) {
-    case 'vivek': return Icons.Zap;
-    case 'bhavana': return Icons.BookOpen;
-    case 'anrunya': return Icons.Shield;
-    case 'kshetradnya': return Icons.Laptop;
-    default: return Icons.Zap;
+// SVG Smooth Curve Generator (Bezier)
+// F33 & F34: Smooth Spousal Brackets and Flowing Sibling Branches
+const CurveConnection = ({ startX, startY, endX, endY, type, isFocused }) => {
+  let d = "";
+  
+  if (type === "spouse") {
+    // Horizontal connection between spouses
+    d = `M ${startX} ${startY} L ${endX} ${endY}`;
+  } else if (type === "child") {
+    // Smooth bezier from parents down to child
+    const midY = startY + (endY - startY) / 2;
+    d = `M ${startX} ${startY} C ${startX} ${midY}, ${endX} ${midY}, ${endX} ${endY}`;
+  } else if (type === "sibling-trunk") {
+    // Drops down from spouse line
+    d = `M ${startX} ${startY} L ${endX} ${endY}`;
   }
+
+  return (
+    <motion.path 
+      d={d}
+      stroke={isFocused ? "var(--accent)" : "rgba(255,255,255,0.15)"}
+      strokeWidth={isFocused ? "4" : "2"}
+      fill="none"
+      initial={{ pathLength: 0 }}
+      whileInView={{ pathLength: 1 }}
+      transition={{ duration: 1.5, ease: "easeInOut" }}
+      className="transition-colors duration-500"
+    />
+  );
 };
 
 const FamilyTreeSection = () => {
   const [selectedMember, setSelectedMember] = useState(null);
   const [hoveredMember, setHoveredMember] = useState(null);
+  const [scale, setScale] = useState(0.8);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [collapsedBranches, setCollapsedBranches] = useState({});
   const { setAccent, setAccentDark } = useAccent();
   const containerRef = useRef(null);
-  
-  // Feature 10: Parallax Background Logic
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
+  const workspaceRef = useRef(null);
 
-  // Feature 14: Magnetic Cursor Interaction
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = (e) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
-    });
+  // F31: Pan & Zoom Control Logic
+  const handleZoomIn = () => setScale(prev => Math.min(prev + 0.2, 2));
+  const handleZoomOut = () => setScale(prev => Math.max(prev - 0.2, 0.4));
+  const handleReset = () => setScale(0.8);
+
+  // Toggle Collapse (F38)
+  const toggleCollapse = (nodeId) => {
+    setCollapsedBranches(prev => ({ ...prev, [nodeId]: !prev[nodeId] }));
+  };
+
+  // Node Positions mapped out for the Pedigree chart
+  // This abstracts a generic tree for UI positioning in a 2000x1200 canvas
+  const canvasW = 2400;
+  const canvasH = 1600;
+  const positions = {
+    'gg-father': { x: canvasW/2 - 200, y: 150 },
+    'gg-mother': { x: canvasW/2 + 200, y: 150 },
+    'g-father': { x: canvasW/2 - 250, y: 550 },
+    'g-mother': { x: canvasW/2 + 250, y: 550 },
+    'vivek': { x: canvasW/2 - 200, y: 950 },
+    'bhavana': { x: canvasW/2 + 200, y: 950 },
+    'anrunya': { x: canvasW/2 - 250, y: 1350 },
+    'kshetradnya': { x: canvasW/2 + 250, y: 1350 }
+  };
+
+  // Check Focus Mode (F40)
+  const isNodeFocused = (id) => {
+    if (searchTerm && pedigreeData) {
+       // Search highlight (F39)
+       // Flat search helper
+       const allMembers = [
+         ...pedigreeData.partners, 
+         ...pedigreeData.children[0].partners, 
+         ...pedigreeData.children[0].children[0].partners,
+         ...pedigreeData.children[0].children[0].children[0].partners,
+         ...pedigreeData.children[0].children[0].children[1].partners
+       ];
+       const found = allMembers.find(m => m.name.toLowerCase().includes(searchTerm.toLowerCase()));
+       if (found && found.id === id) return true;
+    }
+    if (!hoveredMember) return true; // everything normal
+    return hoveredMember === id;
+  };
+
+  const getFilteredOpacity = (id) => {
+    if (!hoveredMember && !searchTerm) return 1;
+    return isNodeFocused(id) ? 1 : 0.2;
   };
 
   return (
     <section 
       ref={containerRef}
-      onMouseMove={handleMouseMove}
-      className="relative min-h-[120vh] bg-dark overflow-hidden py-32 px-4 md:px-12 flex flex-col items-center select-none"
+      className="relative min-h-[100vh] bg-dark overflow-hidden py-24 flex flex-col items-center select-none"
       id="legacy-tree"
     >
-      {/* Feature 28: Reactive Watermark */}
-      <motion.div 
-        style={{ x: (mousePos.x - 500) * 0.05, y: (mousePos.y - 500) * 0.05 }}
-        className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.03] z-0"
-      >
-        <h2 className="font-anton text-[25vw] leading-none text-cream">PATOLE</h2>
-      </motion.div>
-
-      {/* Feature 4: Floating Particles */}
-      <div className="absolute inset-0 pointer-events-none z-10">
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-1 h-1 bg-cream rounded-full opacity-20"
-            initial={{ 
-              x: Math.random() * 100 + "%", 
-              y: Math.random() * 100 + "%" 
-            }}
-            animate={{ 
-              y: [null, "-20%"],
-              opacity: [0.2, 0.5, 0.2]
-            }}
-            transition={{ 
-              duration: Math.random() * 10 + 10, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-          />
-        ))}
+      <div className="text-center z-50 mb-8 pointer-events-none">
+         <span className="text-accent uppercase tracking-[0.4em] text-xs font-bold mb-4 block">Interactive Pedigree</span>
+         <h2 className="font-anton text-6xl md:text-8xl text-cream leading-tight drop-shadow-2xl">
+           THE <span className="text-outline-cream">LEGACY</span> TREE
+         </h2>
       </div>
 
-      {/* Header */}
-      <motion.div 
-        style={{ opacity }}
-        className="relative z-20 text-center mb-16 md:mb-24"
-      >
-        <span className="text-accent uppercase tracking-[0.4em] text-xs font-bold mb-4 block">Interactive Genealogy</span>
-        <h2 className="font-anton text-6xl md:text-8xl text-cream leading-tight">
-          THE <span className="text-outline-cream">LEGACY</span> TREE
-        </h2>
-      </motion.div>
-
-      {/* Feature 1: Dynamic Tree Container */}
-      <div className="relative w-full max-w-6xl py-20 flex flex-col items-center z-20">
-        
-        {/* SVG Layer for Connections */}
-        <svg className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-visible hidden md:block">
-          <defs>
-            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="var(--accent, #fff)" stopOpacity="0.1" />
-              <stop offset="50%" stopColor="var(--accent, #fff)" stopOpacity={hoveredMember ? "0.6" : "0.3"} />
-              <stop offset="100%" stopColor="var(--accent, #fff)" stopOpacity="0.1" />
-            </linearGradient>
-            
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          
-          <motion.path 
-            d="M 50% 0 L 50% 100%" 
-            stroke="url(#lineGrad)" 
-            strokeWidth={hoveredMember ? "4" : "2"}
-            fill="none"
-            strokeDasharray="10,10"
-            initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            transition={{ duration: 2 }}
-            className="transition-all duration-700"
-            style={{ filter: hoveredMember ? "url(#glow)" : "none" }}
+      {/* F39: Search & Top UI Bar */}
+      <div className="absolute top-8 left-8 z-50 flex items-center gap-4">
+        <div className="relative group flex items-center">
+          <div className="absolute left-4 text-cream/50 pointer-events-none">
+            {Icons.Search}
+          </div>
+          <input 
+            type="text" 
+            placeholder="FIND MEMBER..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="bg-black/40 border border-cream/10 rounded-full py-3 pl-12 pr-6 text-sm font-inter uppercase tracking-widest text-cream focus:outline-none focus:border-accent w-64 transition-all glass"
           />
-
-          <g className="opacity-10 text-[10px] font-anton tracking-[1em] fill-cream select-none">
-            <text x="52%" y="10%">ORIGIN</text>
-            <text x="52%" y="45%">LEGACY</text>
-            <text x="52%" y="85%">SUCCESSION</text>
-          </g>
-
-          <motion.path 
-            d="M 25% 30% L 75% 30% M 25% 75% L 75% 75%" 
-            stroke="url(#lineGrad)" 
-            strokeWidth="1"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            whileInView={{ pathLength: 1 }}
-            transition={{ duration: 2, delay: 0.5 }}
-          />
-        </svg>
-
-        {/* Feature 11: Adaptive Mobile Layout (Grid to Stack) */}
-        <div className="relative w-full h-full flex flex-col md:grid md:grid-cols-2 gap-y-16 md:gap-y-32 items-center justify-items-center">
-          
-          <motion.div 
-            className="md:absolute md:top-0 md:left-1/2 md:-translate-x-1/2 md:-translate-y-12 px-6 py-2 glass border border-cream/10 rounded-full text-[10px] text-accent font-bold uppercase tracking-[0.5em] z-30 mb-8 md:mb-0"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-          >
-            Ancestry
-          </motion.div>
-
-          {familyMembers.map((member, idx) => (
-            <TreeMemberNode 
-              key={member.id}
-              member={member}
-              index={idx}
-              isHovered={hoveredMember === member.id}
-              isSelected={selectedMember?.id === member.id}
-              onHover={() => {
-                setHoveredMember(member.id);
-                setAccent(member.accent);
-                setAccentDark(member.accentDark);
-              }}
-              onLeave={() => setHoveredMember(null)}
-              onClick={() => setSelectedMember(member)}
-            />
-          ))}
-
-          <motion.div 
-            className="md:absolute md:bottom-0 md:left-1/2 md:-translate-x-1/2 md:translate-y-20 px-6 py-2 glass border border-cream/10 rounded-full text-[10px] text-accent font-bold uppercase tracking-[0.5em] z-30 mt-16 md:mt-0"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-          >
-            Descendants
-          </motion.div>
         </div>
       </div>
 
-      {/* Feature 7: Click-to-Expand Detail Panel */}
+      {/* F31 & F35: Zoom & Pan Controls Map overlay */}
+      <div className="absolute bottom-8 right-8 z-50 flex flex-col gap-2 glass p-2 rounded-2xl border border-cream/10 bg-black/50">
+        <button onClick={handleZoomIn} className="w-10 h-10 flex items-center justify-center text-cream hover:text-accent hover:bg-white/5 rounded-xl transition-colors" aria-label="Zoom In">{Icons.ZoomIn}</button>
+        <button onClick={handleReset} className="w-10 h-10 flex items-center justify-center text-cream hover:text-accent hover:bg-white/5 rounded-xl transition-colors" aria-label="Reset View">{Icons.Reset}</button>
+        <button onClick={handleZoomOut} className="w-10 h-10 flex items-center justify-center text-cream hover:text-accent hover:bg-white/5 rounded-xl transition-colors" aria-label="Zoom Out">{Icons.ZoomOut}</button>
+      </div>
+
+      {/* F36: Mini-map Navigation overlay */}
+      <div className="absolute bottom-8 left-8 z-50 w-48 h-32 glass border border-cream/10 rounded-2xl bg-black/50 overflow-hidden opacity-50 hover:opacity-100 transition-opacity hidden md:block">
+        <div className="absolute inset-2 border border-accent/30 rounded-lg pointer-events-none"></div>
+        {/* Simple mock dot representations */}
+        {Object.values(positions).map((pos, i) => (
+          <div key={i} className="absolute w-2 h-2 bg-cream rounded-full" style={{ left: `${(pos.x / canvasW) * 100}%`, top: `${(pos.y / canvasH) * 100}%` }}></div>
+        ))}
+      </div>
+
+      {/* Workspace Container for Zoom & Pan */}
+      {/* F37: Draggable Grab Cursor interactions */}
+      <div className="relative w-full flex-grow overflow-hidden cursor-grab active:cursor-grabbing border-y border-cream/5" style={{ minHeight: '80vh' }}>
+        
+        <motion.div 
+          ref={workspaceRef}
+          drag
+          dragConstraints={{ left: -canvasW/2, right: canvasW/2, top: -canvasH/2, bottom: canvasH/2 }}
+          dragElastic={0.1}
+          animate={{ scale }}
+          style={{ width: canvasW, height: canvasH, originX: 0.5, originY: 0.2 }}
+          className="absolute left-1/2 top-0 -translate-x-1/2"
+        >
+          {/* F32: Generation Depth Background Labels */}
+          <div className="absolute inset-0 pointer-events-none flex flex-col justify-between">
+             <div className="h-[400px] flex items-center justify-center border-b border-cream/5 relative"><span className="absolute left-10 font-anton text-[8rem] text-white/[0.02]">GEN I</span></div>
+             <div className="h-[400px] flex items-center justify-center border-b border-cream/5 relative"><span className="absolute left-10 font-anton text-[8rem] text-white/[0.02]">GEN II</span></div>
+             <div className="h-[400px] flex items-center justify-center border-b border-cream/5 relative"><span className="absolute left-10 font-anton text-[8rem] text-white/[0.02]">GEN III</span></div>
+             <div className="h-[400px] flex items-center justify-center relative"><span className="absolute left-10 font-anton text-[8rem] text-white/[0.02]">GEN IV</span></div>
+          </div>
+
+          {/* SVG Connections Layer */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none z-0">
+            {/* Gen 1 Spouses */}
+            <CurveConnection startX={positions['gg-father'].x} startY={positions['gg-father'].y} endX={positions['gg-mother'].x} endY={positions['gg-mother'].y} type="spouse" isFocused={hoveredMember === 'gg-father' || hoveredMember === 'gg-mother'} />
+            <CurveConnection startX={canvasW/2} startY={positions['gg-father'].y} endX={canvasW/2} endY={positions['g-father'].y - 120} type="sibling-trunk" isFocused={hoveredMember === 'g-father' || hoveredMember === 'g-mother'} />
+            
+            {!collapsedBranches['grandparents'] && (
+              <>
+                <CurveConnection startX={canvasW/2} startY={positions['g-father'].y - 120} endX={positions['g-father'].x} endY={positions['g-father'].y} type="child" isFocused={hoveredMember === 'g-father'} />
+                
+                {/* Gen 2 Spouses */}
+                <CurveConnection startX={positions['g-father'].x} startY={positions['g-father'].y} endX={positions['g-mother'].x} endY={positions['g-mother'].y} type="spouse" isFocused={hoveredMember === 'g-father' || hoveredMember === 'g-mother'} />
+                <CurveConnection startX={canvasW/2} startY={positions['g-father'].y} endX={canvasW/2} endY={positions['vivek'].y - 120} type="sibling-trunk" isFocused={hoveredMember === 'vivek'} />
+                
+                {!collapsedBranches['parents'] && (
+                  <>
+                    <CurveConnection startX={canvasW/2} startY={positions['vivek'].y - 120} endX={positions['vivek'].x} endY={positions['vivek'].y} type="child" isFocused={hoveredMember === 'vivek'} />
+                    
+                    {/* Gen 3 Spouses */}
+                    <CurveConnection startX={positions['vivek'].x} startY={positions['vivek'].y} endX={positions['bhavana'].x} endY={positions['bhavana'].y} type="spouse" isFocused={hoveredMember === 'vivek' || hoveredMember === 'bhavana'} />
+                    <CurveConnection startX={canvasW/2} startY={positions['vivek'].y} endX={canvasW/2} endY={positions['anrunya'].y - 120} type="sibling-trunk" isFocused={hoveredMember === 'anrunya' || hoveredMember === 'kshetradnya'} />
+                    
+                    {!collapsedBranches['children'] && (
+                      <>
+                        <CurveConnection startX={canvasW/2} startY={positions['anrunya'].y - 120} endX={positions['anrunya'].x} endY={positions['anrunya'].y} type="child" isFocused={hoveredMember === 'anrunya'} />
+                        <CurveConnection startX={canvasW/2} startY={positions['kshetradnya'].y - 120} endX={positions['kshetradnya'].x} endY={positions['kshetradnya'].y} type="child" isFocused={hoveredMember === 'kshetradnya'} />
+                      </>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </svg>
+
+          {/* Node Overlay Layer */}
+          {/* Gen I Nodes */}
+          <PedigreeNode member={pedigreeData.partners[0]} pos={positions['gg-father']} onClick={() => setSelectedMember(pedigreeData.partners[0])} onHover={setHoveredMember} opacity={getFilteredOpacity('gg-father')} />
+          <PedigreeNode member={pedigreeData.partners[1]} pos={positions['gg-mother']} onClick={() => setSelectedMember(pedigreeData.partners[1])} onHover={setHoveredMember} opacity={getFilteredOpacity('gg-mother')} />
+          
+          <CollapseToggle onClick={() => toggleCollapse('grandparents')} isCollapsed={collapsedBranches['grandparents']} pos={{x: canvasW/2, y: positions['gg-father'].y + 60}} />
+
+          {/* Gen II Nodes */}
+          {!collapsedBranches['grandparents'] && (
+            <>
+              <PedigreeNode member={pedigreeData.children[0].partners[0]} pos={positions['g-father']} onClick={() => setSelectedMember(pedigreeData.children[0].partners[0])} onHover={setHoveredMember} opacity={getFilteredOpacity('g-father')} />
+              <PedigreeNode member={pedigreeData.children[0].partners[1]} pos={positions['g-mother']} onClick={() => setSelectedMember(pedigreeData.children[0].partners[1])} onHover={setHoveredMember} opacity={getFilteredOpacity('g-mother')} />
+              
+              <CollapseToggle onClick={() => toggleCollapse('parents')} isCollapsed={collapsedBranches['parents']} pos={{x: canvasW/2, y: positions['g-father'].y + 60}} />
+
+              {/* Gen III Nodes */}
+              {!collapsedBranches['parents'] && (
+                <>
+                  <PedigreeNode member={pedigreeData.children[0].children[0].partners[0]} pos={positions['vivek']} onClick={() => setSelectedMember(pedigreeData.children[0].children[0].partners[0])} onHover={setHoveredMember} opacity={getFilteredOpacity('vivek')} />
+                  <PedigreeNode member={pedigreeData.children[0].children[0].partners[1]} pos={positions['bhavana']} onClick={() => setSelectedMember(pedigreeData.children[0].children[0].partners[1])} onHover={setHoveredMember} opacity={getFilteredOpacity('bhavana')} />
+                  
+                  <CollapseToggle onClick={() => toggleCollapse('children')} isCollapsed={collapsedBranches['children']} pos={{x: canvasW/2, y: positions['vivek'].y + 60}} />
+
+                  {/* Gen IV Nodes */}
+                  {!collapsedBranches['children'] && (
+                    <>
+                      <PedigreeNode member={pedigreeData.children[0].children[0].children[0].partners[0]} pos={positions['anrunya']} onClick={() => setSelectedMember(pedigreeData.children[0].children[0].children[0].partners[0])} onHover={setHoveredMember} opacity={getFilteredOpacity('anrunya')} />
+                      <PedigreeNode member={pedigreeData.children[0].children[0].children[1].partners[0]} pos={positions['kshetradnya']} onClick={() => setSelectedMember(pedigreeData.children[0].children[0].children[1].partners[0])} onHover={setHoveredMember} opacity={getFilteredOpacity('kshetradnya')} />
+                    </>
+                  )}
+                </>
+              )}
+            </>
+          )}
+
+        </motion.div>
+      </div>
+
+      {/* F7: Click-to-Expand Detail Panel */}
       <AnimatePresence>
         {selectedMember && (
           <DetailPanel 
@@ -242,136 +313,84 @@ const FamilyTreeSection = () => {
         )}
       </AnimatePresence>
 
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center opacity-30 animate-bounce">
-        <span className="text-[10px] uppercase tracking-widest text-cream mb-2">Scroll To Explore</span>
-        <div className="w-[1px] h-10 bg-cream"></div>
-      </div>
     </section>
   );
 };
 
-// Feature 2: Interactive Member Node Component
-const TreeMemberNode = ({ member, index, isHovered, isSelected, onHover, onLeave, onClick }) => {
-  const [rotate, setRotate] = useState({ x: 0, y: 0 });
-  
-  const handleMouseMove = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -20;
-    setRotate({ x, y });
-  };
+// Node Collapse Button (F38)
+const CollapseToggle = ({ onClick, isCollapsed, pos }) => (
+  <button 
+    onClick={(e) => { e.stopPropagation(); onClick(); }}
+    className="absolute z-30 w-8 h-8 -translate-x-1/2 -translate-y-1/2 rounded-full glass border border-cream/20 flex items-center justify-center text-cream hover:bg-accent hover:text-dark hover:border-accent transition-all shadow-xl"
+    style={{ left: pos.x, top: pos.y }}
+    aria-label="Toggle Branch"
+  >
+    <span className="font-anton text-xl leading-none">{isCollapsed ? '+' : '-'}</span>
+  </button>
+);
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      onClick();
-    }
-  };
+const PedigreeNode = ({ member, pos, onClick, onHover, opacity }) => {
+  const isHovered = opacity === 1;
+
+  // Extended members logic for images
+  const imgSrc = member.image.includes('placeholder') 
+    ? 'https://via.placeholder.com/400x400/1a1a1a/ffffff?text=' + member.name[0]
+    : `/${member.image}`;
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.8, y: 30 }}
-      whileInView={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ delay: index * 0.1, duration: 0.8 }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => {
-        onLeave();
-        setRotate({ x: 0, y: 0 });
-      }}
-      onMouseEnter={onHover}
+      initial={{ opacity: 0, scale: 0.8 }}
+      whileInView={{ opacity, scale: 1 }}
+      animate={{ opacity }}
+      transition={{ duration: 0.5 }}
+      onMouseEnter={() => onHover(member.id)}
+      onMouseLeave={() => onHover(null)}
       onClick={onClick}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-      role="button"
-      aria-label={`View ${member.name}'s details`}
-      style={{ 
-        rotateX: rotate.y, 
-        rotateY: rotate.x,
-        perspective: 1000
-      }}
-      className={`group relative cursor-pointer z-20 outline-none w-48 h-48 md:w-56 md:h-56`}
+      className={`absolute z-20 outline-none w-56 h-56 cursor-pointer -translate-x-1/2 -translate-y-1/2 group transition-opacity duration-300`}
+      style={{ left: pos.x, top: pos.y }}
     >
-      <div 
-        className={`absolute -inset-16 rounded-full opacity-0 blur-3xl transition-opacity duration-1000 pointer-events-none ${isHovered ? 'opacity-30' : ''}`}
-        style={{ background: member.accent }}
-      ></div>
-
-      <div className={`relative w-full h-full rounded-full glass border border-cream/10 p-1 overflow-hidden transition-all duration-500 ${isHovered ? 'border-accent/60 scale-110 shadow-[0_0_50px_rgba(255,255,255,0.1)]' : 'group-hover:border-accent/40'}`}>
+      <div className={`relative w-full h-full rounded-2xl glass border border-cream/10 p-1 overflow-hidden transition-all duration-500 hover:border-accent/60 hover:scale-105 shadow-2xl`}>
         
-        <div className="w-full h-full rounded-full overflow-hidden relative bg-dark/40">
-          {member.image ? (
-            <img 
-              src={`/${member.image}`} 
-              alt={member.name}
-              className={`w-full h-full object-cover transition-all duration-1000 ${isHovered ? 'grayscale-0 scale-110' : 'grayscale group-hover:grayscale-0 group-hover:scale-110'}`}
-              onError={(e) => {
-                // Feature 2: Fallback to initials if image fails
-                e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'flex';
-              }}
-            />
-          ) : null}
-          <div className="absolute inset-0 flex items-center justify-center font-anton text-4xl text-cream opacity-20 hidden">
-            {member.name[0]}
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent opacity-80"></div>
+        <div className="w-full h-full rounded-xl overflow-hidden relative bg-dark">
+          <img 
+            src={imgSrc} 
+            alt={member.name}
+            className={`w-full h-full object-cover transition-all duration-1000 grayscale group-hover:grayscale-0 group-hover:scale-110`}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-dark/90 via-dark/20 to-transparent opacity-90"></div>
         </div>
 
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 text-center px-4 pointer-events-none">
-          <h3 className="font-anton text-xl md:text-2xl text-cream leading-tight tracking-wider uppercase">
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-8 text-center px-4 pointer-events-none">
+          <h3 className="font-anton text-2xl text-cream leading-tight tracking-wider uppercase drop-shadow-md">
             {member.name}
           </h3>
-          <span className="text-[9px] md:text-[10px] text-accent font-bold uppercase tracking-[0.3em] mt-1.5 opacity-80">
-            {member.role ? member.role.split(' ')[0] : ''}
+          <span className="text-[10px] text-accent font-bold uppercase tracking-[0.3em] mt-1 drop-shadow-md">
+            {member.role ? member.role.split(',')[0] : ''}
           </span>
         </div>
 
-        <div className="absolute top-6 right-6 w-8 h-8 rounded-full glass border border-cream/20 flex items-center justify-center text-cream group-hover:text-accent transition-all duration-500">
+        <div className="absolute top-4 right-4 w-8 h-8 rounded-full glass border border-cream/20 flex items-center justify-center text-cream group-hover:text-accent group-hover:rotate-12 transition-all duration-500">
           {getRoleIcon(member.id)}
         </div>
-
-        <div className="absolute top-6 left-6 w-6 h-6 rounded-full bg-accent text-dark flex items-center justify-center text-[10px] font-bold">
-          {member.achievements?.length || 0}
-        </div>
+        
+        {member.isPrimary && (
+           <div className="absolute top-4 left-4 w-12 py-1 rounded-full bg-accent text-dark flex items-center justify-center text-[8px] font-bold tracking-widest uppercase">
+             Primary
+           </div>
+        )}
       </div>
 
-      <AnimatePresence>
-        {isHovered && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute -right-8 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-30"
-          >
-            {member.socials && member.socials.slice(0, 3).map((social, i) => (
-              <motion.a
-                key={social.platform}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                initial={{ x: 30, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: i * 0.1 }}
-                className="w-10 h-10 rounded-full glass border border-cream/20 flex items-center justify-center text-cream hover:bg-accent hover:text-dark transition-all duration-300"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {Icons.Link}
-              </motion.a>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+       {/* F40: Focus Info overlay inside node */}
       <AnimatePresence>
         {isHovered && (
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="absolute top-full left-1/2 -translate-x-1/2 mt-8 glass border border-cream/10 p-5 rounded-2xl w-72 pointer-events-none z-30 shadow-2xl"
+            className="absolute top-full left-1/2 -translate-x-1/2 mt-4 glass border border-cream/10 p-4 rounded-xl w-64 pointer-events-none z-30 shadow-2xl text-center"
           >
-            <div className="w-8 h-1 bg-accent mb-3"></div>
-            <p className="text-[11px] text-cream/80 font-inter uppercase tracking-[0.25em] leading-relaxed">
-              {member.bio}
+            <p className="text-[10px] text-cream font-inter uppercase tracking-[0.2em] leading-relaxed">
+              {member.bio ? member.bio.substring(0, 60) + '...' : 'Extended Ancestry'}
             </p>
           </motion.div>
         )}
@@ -382,6 +401,10 @@ const TreeMemberNode = ({ member, index, isHovered, isSelected, onHover, onLeave
 
 // Feature 7: Deep Dive Detail Panel
 const DetailPanel = ({ member, onClose }) => {
+  const imgSrc = member.image.includes('placeholder') 
+    ? 'https://via.placeholder.com/400x400/1a1a1a/ffffff?text=' + member.name[0]
+    : `/${member.image}`;
+
   return (
     <motion.div 
       initial={{ opacity: 0 }}
@@ -403,53 +426,61 @@ const DetailPanel = ({ member, onClose }) => {
         </button>
 
         <div className="flex flex-col h-full">
-          <header className="mb-12">
-            <span className="text-accent uppercase tracking-widest text-xs font-bold mb-4 block">Legacy Snapshot</span>
-            <h2 className="font-anton text-5xl md:text-7xl text-cream mb-4 tracking-tight">{member.name.toUpperCase()} <span className="text-outline-cream">{member.surname.toUpperCase()}</span></h2>
-            <p className="text-xl md:text-2xl text-cream italic font-playfair opacity-80 leading-relaxed">"{member.quote}"</p>
+          <header className="mb-12 flex items-center gap-8">
+            <div className="w-24 h-24 rounded-full overflow-hidden shrink-0 border border-cream/20">
+              <img src={imgSrc} alt="Avatar" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <span className="text-accent uppercase tracking-widest text-xs font-bold mb-2 block">Pedigree Snapshot</span>
+              <h2 className="font-anton text-4xl md:text-5xl text-cream tracking-tight">{member.name.toUpperCase()} <span className="text-outline-cream">{member.surname.toUpperCase()}</span></h2>
+            </div>
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
             <div>
               <h4 className="text-accent text-[10px] uppercase tracking-[0.4em] font-bold mb-6">Manifesto</h4>
               <p className="text-cream/80 text-base leading-relaxed font-inter">
-                {member.bio}
+                {member.bio || "Data not fully logged in pedigree archives."}
               </p>
             </div>
 
             <div className="space-y-8">
               <div>
-                <h4 className="text-accent text-[10px] uppercase tracking-[0.4em] font-bold mb-6">Key Milestones ({member.achievements?.length})</h4>
+                <h4 className="text-accent text-[10px] uppercase tracking-[0.4em] font-bold mb-6">Key Milestones</h4>
                 <div className="space-y-4">
-                  {member.achievements?.map((ach, i) => (
+                  {member.achievements?.length > 0 ? member.achievements.map((ach, i) => (
                     <div key={i} className="flex items-start gap-4 group">
                       <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 group-hover:scale-150 transition-transform"></div>
                       <span className="text-cream/70 text-sm font-medium leading-tight">{ach}</span>
                     </div>
-                  ))}
+                  )) : (
+                    <span className="text-cream/50 text-sm italic">Historical records unverified.</span>
+                  )}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mb-16">
-            <h4 className="text-accent text-[10px] uppercase tracking-[0.4em] font-bold mb-8">Notable Ventures</h4>
-            <div className="grid grid-cols-1 gap-4">
-              {member.projects.map((proj, i) => (
-                <a key={i} href={proj.link} target="_blank" rel="noopener noreferrer" className="group block glass border border-cream/5 p-6 rounded-2xl hover:border-accent/40 transition-all duration-500">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="text-[10px] text-accent font-bold uppercase tracking-widest mb-1 block opacity-60 group-hover:opacity-100">{proj.type}</span>
-                      <h5 className="text-xl text-cream font-anton tracking-wide group-hover:text-accent transition-colors">{proj.name}</h5>
+          {member.projects && member.projects.length > 0 && (
+            <div className="mb-16">
+              <h4 className="text-accent text-[10px] uppercase tracking-[0.4em] font-bold mb-8">Notable Ventures</h4>
+              <div className="grid grid-cols-1 gap-4">
+                {member.projects.map((proj, i) => (
+                  <a key={i} href={proj.link} target="_blank" rel="noopener noreferrer" className="group block glass border border-cream/5 p-6 rounded-2xl hover:border-accent/40 transition-all duration-500">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <span className="text-[10px] text-accent font-bold uppercase tracking-widest mb-1 block opacity-60 group-hover:opacity-100">{proj.type}</span>
+                        <h5 className="text-xl text-cream font-anton tracking-wide group-hover:text-accent transition-colors">{proj.name}</h5>
+                      </div>
+                      <div className="w-12 h-12 rounded-full glass border border-cream/10 bg-cream/5 flex items-center justify-center text-cream group-hover:bg-accent group-hover:text-dark transition-all duration-500">
+                        {Icons.ArrowRight}
+                      </div>
                     </div>
-                    <div className="w-12 h-12 rounded-full glass border border-cream/10 bg-cream/5 flex items-center justify-center text-cream group-hover:bg-accent group-hover:text-dark transition-all duration-500">
-                      {Icons.ArrowRight}
-                    </div>
-                  </div>
-                </a>
-              ))}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mt-auto pt-8 border-t border-cream/10 flex flex-wrap items-center justify-between gap-6">
             <div className="flex gap-4">
@@ -460,15 +491,17 @@ const DetailPanel = ({ member, onClose }) => {
               ))}
             </div>
             
-            <button 
-              onClick={() => {
-                document.getElementById(member.id)?.scrollIntoView({ behavior: 'smooth' });
-                onClose();
-              }}
-              className="text-xs font-bold uppercase tracking-[0.4em] text-accent flex items-center gap-2 group"
-            >
-              Full Profile {Icons.ArrowRight}
-            </button>
+            {member.isPrimary && (
+              <button 
+                onClick={() => {
+                  document.getElementById(member.id)?.scrollIntoView({ behavior: 'smooth' });
+                  onClose();
+                }}
+                className="text-xs font-bold uppercase tracking-[0.4em] text-accent flex items-center gap-2 group"
+              >
+                Full Profile {Icons.ArrowRight}
+              </button>
+            )}
           </div>
         </div>
       </motion.div>
