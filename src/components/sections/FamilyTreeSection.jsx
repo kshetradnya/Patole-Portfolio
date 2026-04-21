@@ -152,24 +152,37 @@ const HLine = ({ delay = 0, w = '40%' }) => (
   />
 );
 
-const MarriedGroup = ({ left, right, onSelect, size = 'md' }) => (
+const MarriedGroup = ({ left, right, onSelect, size = 'md', highlightLeft = false, highlightRight = false }) => (
   <div className="flex items-end gap-3">
-    <PersonCard person={left}  onSelect={onSelect} size={size} />
-    <span className="text-cream/20 text-xl mb-6 select-none">∞</span>
-    <PersonCard person={right} onSelect={onSelect} size={size} />
+    <PersonCard person={left}  onSelect={onSelect} size={size} highlight={highlightLeft} />
+    <motion.span 
+      initial={{ opacity: 0.2 }}
+      animate={{ opacity: 0.5, scale: [1, 1.1, 1] }}
+      transition={{ duration: 4, repeat: Infinity }}
+      className="text-accent text-7xl mb-4 select-none font-anton"
+      style={{ filter: 'drop-shadow(0 0 10px var(--accent))' }}
+    >∞</motion.span>
+    <PersonCard person={right} onSelect={onSelect} size={size} highlight={highlightRight} />
   </div>
 );
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SIBLING + THEIR FAMILY UNIT  (uncle/aunt + cousins)
 // ─────────────────────────────────────────────────────────────────────────────
-const SiblingUnit = ({ uncle, onSelect, side }) => {
+const SiblingUnit = ({ uncle, onSelect, side, isMatched }) => {
   const [open, setOpen] = useState(true);
   return (
     <div className="flex flex-col items-center gap-0">
       {/* Uncle + Spouse */}
       <div className="flex flex-col items-center">
-        <MarriedGroup left={uncle} right={uncle.spouse} onSelect={onSelect} size="sm" />
+        <MarriedGroup 
+          left={uncle} 
+          right={uncle.spouse} 
+          onSelect={onSelect} 
+          size="sm" 
+          highlightLeft={isMatched(uncle.id)}
+          highlightRight={isMatched(uncle.spouse.id)}
+        />
         {/* Collapse toggle */}
         <button
           onClick={() => setOpen(o => !o)}
@@ -191,7 +204,12 @@ const SiblingUnit = ({ uncle, onSelect, side }) => {
               {uncle.children.map(c => (
                 <div key={c.id} className="flex flex-col items-center">
                   <VLine h="h-4" />
-                  <PersonCard person={c} onSelect={onSelect} size="xs" />
+                  <PersonCard 
+                    person={c} 
+                    onSelect={onSelect} 
+                    size="xs" 
+                    highlight={isMatched(c.id)}
+                  />
                 </div>
               ))}
             </div>
@@ -237,9 +255,11 @@ const FamilyTreeSection = () => {
 
   const handleSelect = (p) => { setSelected(p); if (p.accent) setAccent(p.accent); };
 
-  const matchId = search.trim()
-    ? allPeople.find(p => p.name.toLowerCase().includes(search.toLowerCase()))?.id
-    : null;
+  const matchedIds = search.trim()
+    ? allPeople.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).map(p => p.id)
+    : [];
+
+  const isMatched = (id) => matchedIds.includes(id);
 
   return (
     <section id="legacy-tree" className="relative bg-dark py-24 px-4 md:px-8 overflow-x-auto">
@@ -276,12 +296,26 @@ const FamilyTreeSection = () => {
 
           {/* ── GEN I ──────────────────────────────────────────── */}
           <GenLabel roman="I" label="Great Grandparents" />
-          <MarriedGroup left={TREE.greatGrandparents.left} right={TREE.greatGrandparents.right} onSelect={handleSelect} size="sm" />
+          <MarriedGroup 
+            left={TREE.greatGrandparents.left} 
+            right={TREE.greatGrandparents.right} 
+            onSelect={handleSelect} 
+            size="sm" 
+            highlightLeft={isMatched(TREE.greatGrandparents.left.id)}
+            highlightRight={isMatched(TREE.greatGrandparents.right.id)}
+          />
           <VLine delay={0.1} />
 
           {/* ── GEN II ─────────────────────────────────────────── */}
           <GenLabel roman="II" label="Grandparents" />
-          <MarriedGroup left={TREE.grandparents.left} right={TREE.grandparents.right} onSelect={handleSelect} size="sm" />
+          <MarriedGroup 
+            left={TREE.grandparents.left} 
+            right={TREE.grandparents.right} 
+            onSelect={handleSelect} 
+            size="sm" 
+            highlightLeft={isMatched(TREE.grandparents.left.id)}
+            highlightRight={isMatched(TREE.grandparents.right.id)}
+          />
           <VLine delay={0.2} />
 
           {/* ── GEN III ────────────────────────────────────────── */}
@@ -294,7 +328,7 @@ const FamilyTreeSection = () => {
             <div className="flex flex-col gap-6 items-end pt-8">
               {TREE.gen3.leftSiblings.map(uncle => (
                 <div key={uncle.id} className="flex flex-col items-center">
-                  <SiblingUnit uncle={uncle} onSelect={handleSelect} side="left" />
+                  <SiblingUnit uncle={uncle} onSelect={handleSelect} side="left" isMatched={isMatched} />
                 </div>
               ))}
             </div>
@@ -307,7 +341,14 @@ const FamilyTreeSection = () => {
                 <div className="w-16 h-px bg-cream/15 mt-[2.5rem]" />
                 {/* Parents */}
                 <div className="flex flex-col items-center">
-                  <MarriedGroup left={TREE.gen3.parents.left} right={TREE.gen3.parents.right} onSelect={handleSelect} size="lg" />
+                  <MarriedGroup 
+                    left={TREE.gen3.parents.left} 
+                    right={TREE.gen3.parents.right} 
+                    onSelect={handleSelect} 
+                    size="lg" 
+                    highlightLeft={isMatched(TREE.gen3.parents.left.id)}
+                    highlightRight={isMatched(TREE.gen3.parents.right.id)}
+                  />
                 </div>
                 {/* Right branch stem */}
                 <div className="w-16 h-px bg-cream/15 mt-[2.5rem]" />
@@ -320,7 +361,7 @@ const FamilyTreeSection = () => {
                 {TREE.children.map(c => (
                   <div key={c.id} className="flex flex-col items-center">
                     <VLine h="h-5" />
-                    <PersonCard person={c} onSelect={handleSelect} size="lg" highlight={matchId === c.id} />
+                    <PersonCard person={c} onSelect={handleSelect} size="lg" highlight={isMatched(c.id)} />
                   </div>
                 ))}
               </div>
@@ -330,7 +371,7 @@ const FamilyTreeSection = () => {
             <div className="flex flex-col gap-6 items-start pt-8">
               {TREE.gen3.rightSiblings.map(uncle => (
                 <div key={uncle.id} className="flex flex-col items-center">
-                  <SiblingUnit uncle={uncle} onSelect={handleSelect} side="right" />
+                  <SiblingUnit uncle={uncle} onSelect={handleSelect} side="right" isMatched={isMatched} />
                 </div>
               ))}
             </div>
