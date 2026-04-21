@@ -21,6 +21,7 @@ import ScrollToTop from './components/effects/ScrollToTop';
 import SectionDots from './components/effects/SectionDots';
 import ParticleBackground from './components/effects/ParticleBackground';
 import KonamiEaster from './components/effects/KonamiEaster';
+import FamilyTreeSection from './components/sections/FamilyTreeSection';
 import { familyMembers } from './data/familyData';
 import { motion } from 'framer-motion';
 
@@ -102,6 +103,9 @@ function App() {
 
           {/* Family Overview Section */}
           <FamilyOverview />
+
+          {/* Family Tree Section */}
+          <FamilyTreeSection />
 
           {/* Member Spotlights */}
           {familyMembers.map((member, index) => (

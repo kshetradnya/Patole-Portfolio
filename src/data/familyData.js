@@ -11,17 +11,18 @@ export const familyMembers = [
     bio: "Recently completed 10th grade with a passion for technology and code. Currently learning programming languages and building the digital experiences of tomorrow. Creator of this website.",
     achievements: ["Built the Patole Family Portfolio", "Learning Web Development & Programming", "Creative Problem Solver"],
     projects: [
-      { name: "Patole.in", type: "Personal Portfolio", link: "https://patole.in" },
-      { name: "Family Digital Archive", type: "React Web App", link: "#" },
-      { name: "Future Startup", type: "Incubation", link: "#" }
+      { name: "Kshetradnya.in", type: "Personal Portfolio", link: "https://kshetradnya.in" },
+      { name: "Interactive Biology", type: "WebGL Simulation", link: "#" },
+      { name: "Retro Games Collection", type: "HTML5 Canvas", link: "#" }
     ],
     socials: [
-      { platform: "Globe", url: "https://patole.in" },
-      { platform: "Github", url: "https://github.com" },
+      { platform: "Globe", url: "https://kshetradnya.in" },
+      { platform: "Linkedin", url: "https://www.linkedin.com/in/kshetradnyapatole/" },
       { platform: "Mail", url: "mailto:kshetradnyap@gmail.com" }
     ],
     hasCV: true,
     quote: "Every expert was once a beginner.",
+    achievements: ["Built the Patole Family Portfolio", "Beta House Captain (2025)", "Creative Problem Solver"],
   },
   {
     id: "anrunya",
@@ -59,12 +60,12 @@ export const familyMembers = [
     bio: "Vice President – Central Engineering at Tata Projects Limited with over three decades of experience in the EPC industry. Specializes in steel-intensive infrastructure, industrial, and energy projects using advanced digital tools like BIM.",
     achievements: ["Vice President at Tata Projects", "Infrastructure Leadership", "Decades of Engineering Excellence"],
     projects: [
-      { name: "BIM-Driven Infrastructure", type: "Tata Projects – Digital Engineering", link: "https://www.tataprojects.com" },
-      { name: "Steel-Intensive EPC Execution", type: "Industrial & Energy Projects", link: "#" },
+      { name: "where engineering meets responsibility", type: "Tata Projects – Digital Engineering", link: "https://ssmb.in/2026/01/16/where-engineering-meets-responsibility/" },
+      { name: "steel intensive epc execution", type: "Industrial & Energy Projects", link: "https://ssmb.in/2025/09/05/steel-briefcase/" },
       { name: "Advanced Specification Systems", type: "Design & Engineering", link: "#" }
     ],
     socials: [
-      { platform: "Linkedin", url: "https://linkedin.com" },
+      { platform: "Linkedin", url: "https://www.linkedin.com/in/vivek-patole-8aab375/" },
       { platform: "Mail", url: "mailto:vivek@patole.family" }
     ],
     hasCV: false,
@@ -82,9 +83,9 @@ export const familyMembers = [
     bio: "Director of the State Institute for Administrative Careers (SIAC), Mumbai – a government institute providing coaching for UPSC Civil Services examinations. Previously with Elphinstone College's Department of History, her research interests include social reform and administrative leadership in Maharashtra.",
     achievements: ["SIAC Director", "Elphinstone College, Dept. of History", "Published Researcher"],
     projects: [
-      { name: "In the Age of Awakening: The Role of Dnyanodaya", type: "European Academic Research, Vol. I, 2014", link: "#" },
-      { name: "Leadership of Yashwantrao Chavan in Modern Maharashtra", type: "Golden Research Thoughts", link: "#" },
-      { name: "UPSC Civil Services Coaching Program", type: "SIAC Mumbai – Administration", link: "#" }
+      { name: "In the Age of Awakening: The Role of Dnyanodaya", type: "European Academic Research, Vol. I, 2014", link: "https://euacademic.org/UploadArticle/315.pdf" },
+      { name: "Leadership of Yashwantrao Chavan in Modern Maharashtra", type: "Golden Research Thoughts", link: "https://oldgrt.lbp.world/UploadedData/720.pdf" },
+      { name: "UPSC Civil Services Coaching Program", type: "SIAC Mumbai – Administration", link: "https://www.siac.org.in/from-directors-desk/" }
     ],
     socials: [
       { platform: "Linkedin", url: "https://linkedin.com" },
