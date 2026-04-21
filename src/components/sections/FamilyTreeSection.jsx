@@ -83,7 +83,12 @@ const allPeople = [
 
 const Avatar = ({ person, size = 'md' }) => {
   const [err, setErr] = useState(false);
-  const sizes = { xs:'w-8 h-8', sm:'w-12 h-12', md:'w-16 h-16', lg:'w-20 h-20' };
+  const sizes = { 
+    xs:'w-8 h-8', 
+    sm:'w-12 h-12', 
+    md:'w-16 h-16', 
+    lg:'w-24 h-24 md:w-32 md:h-32' // Enlarged primary family size
+  };
   return (
     <div className={`${sizes[size]} rounded-full overflow-hidden border-2 flex-shrink-0 relative`} style={{ borderColor: person.accent }}>
       {person.image && !err
@@ -99,26 +104,26 @@ const PersonCard = ({ person, onSelect, size = 'sm', highlight = false, dim = fa
     whileHover={{ scale: dim ? 1 : 1.1, y: dim ? 0 : -2 }}
     onClick={() => onSelect(person)}
     animate={{ opacity: dim ? 0.2 : 1 }}
-    className="flex flex-col items-center gap-1 group relative outline-none"
+    className={`flex flex-col items-center gap-2 group relative outline-none ${person.isPrimary && size === 'lg' ? 'scale-110' : ''}`}
     aria-label={person.name}
   >
     <div className="relative">
       <Avatar person={person} size={size} />
       {highlight && (
-        <motion.div animate={{ scale:[1, 1.2, 1] }} transition={{ repeat:Infinity, duration:2 }} className="absolute -inset-1.5 rounded-full border-2" style={{ borderColor: person.accent, boxShadow: `0 0 12px ${person.accent}` }} />
+        <motion.div animate={{ scale:[1, 1.2, 1] }} transition={{ repeat:Infinity, duration:2 }} className="absolute -inset-2 rounded-full border-2" style={{ borderColor: person.accent, boxShadow: `0 0 16px ${person.accent}` }} />
       )}
-      {person.isPrimary && !dim && <span className="absolute -inset-1 rounded-full border opacity-30 animate-ping pointer-events-none" style={{ borderColor: person.accent }} />}
+      {person.isPrimary && !dim && <span className="absolute -inset-2 rounded-full border-2 opacity-50 animate-ping pointer-events-none" style={{ borderColor: person.accent }} />}
     </div>
-    <span className="font-anton text-[9px] text-cream uppercase tracking-tighter opacity-80 group-hover:opacity-100 transition-opacity">{person.name}</span>
-    {highlight && <span className="absolute -top-6 bg-accent text-dark font-inter text-[8px] px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">MATCH</span>}
+    <span className={`font-anton text-cream uppercase tracking-tighter opacity-80 group-hover:opacity-100 transition-opacity ${size === 'lg' ? 'text-sm mt-1' : 'text-[9px]'}`}>{person.name}</span>
+    {highlight && <span className="absolute -top-10 bg-accent text-dark font-inter text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider shadow-lg">MATCH</span>}
   </motion.button>
 );
 
 const MarriageSymbol = () => (
   <motion.div 
-    animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
-    transition={{ duration: 4, repeat: Infinity }}
-    className="text-4xl text-accent/60 font-anton select-none drop-shadow-[0_0_10px_rgba(0,212,255,0.4)]"
+    animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
+    transition={{ duration: 3, repeat: Infinity }}
+    className="text-5xl text-accent font-anton select-none drop-shadow-[0_0_20px_rgba(0,212,255,0.6)] px-1"
   >∞</motion.div>
 );
 
@@ -247,8 +252,10 @@ const FamilyTreeSection = () => {
 
           {/* Center Marriage Connecting Line */}
           <div className="flex flex-col items-center pt-8 justify-center absolute left-1/2 -translate-x-1/2">
-             <MarriageSymbol />
-             <div className="font-anton text-[8px] text-cream/20 mt-1 uppercase tracking-widest">Generation III</div>
+             <div className="bg-accent/10 p-2 rounded-full backdrop-blur-sm border border-accent/20">
+                <MarriageSymbol />
+             </div>
+             <div className="font-anton text-[9px] text-accent mt-2 uppercase tracking-[0.5em] font-bold">Core Family</div>
           </div>
 
           {/* Maternal Siblings Unit */}
@@ -275,34 +282,40 @@ const FamilyTreeSection = () => {
         </div>
 
         {/* Final Convergence to Generation IV */}
-        <div className="flex justify-center -mt-px relative h-20">
+        <div className="flex justify-center -mt-px relative h-28">
              {/* Vivek & Bhavana Descend */}
              <div className="absolute left-1/2 -translate-x-1/2 top-0 flex flex-col items-center">
-                <ConnectLine length="h-10" color="bg-accent/40" />
-                <ConnectLine type="h" length="w-48" color="bg-accent/40" />
-                <div className="flex justify-between w-48">
-                    <ConnectLine length="h-8" color="bg-accent/40" />
-                    <ConnectLine length="h-8" color="bg-accent/40" />
+                <ConnectLine length="h-12" color="bg-accent" />
+                <ConnectLine type="h" length="w-64" color="bg-accent" />
+                <div className="flex justify-between w-64">
+                    <ConnectLine length="h-12" color="bg-accent" />
+                    <ConnectLine length="h-12" color="bg-accent" />
                 </div>
              </div>
              {/* Left Cousin Descend */}
-             <div className="absolute left-20">
-                 <div className="flex gap-16">
-                    <PersonCard person={DATA.paternal.siblings[0].children[0]} onSelect={handleSelect} size="sm" highlight={isMatched('cous1')} dim={isDimmed('cous1')} />
-                    <PersonCard person={DATA.paternal.siblings[0].children[1]} onSelect={handleSelect} size="sm" highlight={isMatched('cous2')} dim={isDimmed('cous2')} />
+             <div className="absolute left-10">
+                 <div className="flex flex-col items-center">
+                    <ConnectLine length="h-10" />
+                    <div className="flex gap-12">
+                        <PersonCard person={DATA.paternal.siblings[0].children[0]} onSelect={handleSelect} size="sm" highlight={isMatched('cous1')} dim={isDimmed('cous1')} />
+                        <PersonCard person={DATA.paternal.siblings[0].children[1]} onSelect={handleSelect} size="sm" highlight={isMatched('cous2')} dim={isDimmed('cous2')} />
+                    </div>
                  </div>
              </div>
              {/* Right Cousin Descend */}
-             <div className="absolute right-20">
-                 <div className="flex gap-16">
-                    <PersonCard person={DATA.maternal.siblings[0].children[0]} onSelect={handleSelect} size="sm" highlight={isMatched('cous3')} dim={isDimmed('cous3')} />
-                    <PersonCard person={DATA.maternal.siblings[0].children[1]} onSelect={handleSelect} size="sm" highlight={isMatched('cous4')} dim={isDimmed('cous4')} />
+             <div className="absolute right-10">
+                 <div className="flex flex-col items-center">
+                    <ConnectLine length="h-10" />
+                    <div className="flex gap-12">
+                        <PersonCard person={DATA.maternal.siblings[0].children[0]} onSelect={handleSelect} size="sm" highlight={isMatched('cous3')} dim={isDimmed('cous3')} />
+                        <PersonCard person={DATA.maternal.siblings[0].children[1]} onSelect={handleSelect} size="sm" highlight={isMatched('cous4')} dim={isDimmed('cous4')} />
+                    </div>
                  </div>
              </div>
         </div>
 
         {/* ROW 4: CHILDREN (GEN IV) */}
-        <div className="flex justify-center gap-32 pt-16">
+        <div className="flex justify-center gap-40 pt-10 px-10">
           <PersonCard person={DATA.children[0]} onSelect={handleSelect} size="lg" highlight={isMatched('anrunya')} dim={isDimmed('anrunya')} />
           <PersonCard person={DATA.children[1]} onSelect={handleSelect} size="lg" highlight={isMatched('kshetradnya')} dim={isDimmed('kshetradnya')} />
         </div>
