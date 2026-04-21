@@ -20,7 +20,7 @@ const MenuOverlay = ({ isOpen, setOpen }) => {
           {/* Topo background hint */}
           <div className="absolute inset-0 opacity-10 bg-topo bg-cover object-cover pointer-events-none mix-blend-screen" />
 
-          <nav className="z-10 flex flex-col items-start gap-4 md:gap-8">
+          <nav className="z-10 flex flex-col items-center md:items-start gap-6 md:gap-8 overflow-y-auto max-h-[80vh] py-10 w-full">
             {menuLinks.map((link, i) => (
               <motion.a
                 key={link}
@@ -33,7 +33,7 @@ const MenuOverlay = ({ isOpen, setOpen }) => {
                     document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
                   }, 300); // Wait for menu to close slightly
                 }}
-                className="font-anton text-5xl md:text-8xl tracking-wider text-cream hover:text-accent transition-colors duration-300"
+                className="font-anton text-4xl md:text-8xl tracking-widest text-cream hover:text-accent transition-all duration-300 transform"
                 style={{ '--tw-text-opacity': 1 }}
                 initial={{ y: 50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}

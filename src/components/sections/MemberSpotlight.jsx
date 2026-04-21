@@ -64,7 +64,7 @@ const MemberSpotlight = ({ member, isAlternate }) => {
     <section 
       ref={containerRef}
       id={member.id}
-      className={`min-h-screen py-20 md:py-32 px-4 md:px-12 relative flex flex-col justify-center ${isAlternate ? 'bg-dark text-cream' : 'bg-cream text-dark'}`}
+      className={`min-h-screen py-12 md:py-32 px-6 md:px-12 relative flex flex-col justify-center ${isAlternate ? 'bg-dark text-cream' : 'bg-cream text-dark'}`}
     >
       <div className="max-w-7xl mx-auto w-full">
         <AnimatedHeading 
@@ -122,13 +122,13 @@ const MemberSpotlight = ({ member, isAlternate }) => {
                     href={proj.link}
                     target={proj.link !== '#' ? "_blank" : undefined}
                     rel="noreferrer"
-                    className="group flex flex-col sm:flex-row sm:items-center justify-between py-6 border-b border-current/10 hover:px-6 transition-all duration-500 cursor-pointer"
+                    className="group flex flex-col sm:flex-row sm:items-center justify-between py-5 md:py-6 border-b border-current/10 hover:px-6 transition-all duration-500 cursor-pointer"
                   >
                     <div className="flex flex-col">
-                      <span className="font-anton text-2xl group-hover:text-[var(--accent)] transition-colors duration-300">
+                      <span className="font-anton text-xl md:text-2xl group-hover:text-[var(--accent)] transition-colors duration-300">
                         {proj.name}
                       </span>
-                      <span className="font-inter text-xs uppercase tracking-widest opacity-50 mt-1">
+                      <span className="font-inter text-[10px] md:text-xs uppercase tracking-widest opacity-50 mt-1">
                         {proj.type}
                       </span>
                     </div>

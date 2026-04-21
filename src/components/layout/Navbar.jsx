@@ -23,7 +23,7 @@ const Navbar = () => {
           
           {/* Menu Toggle */}
           <div className="flex items-center gap-8 z-50 relative">
-            <span className="hidden md:block font-inter text-xs font-semibold tracking-[0.2em] uppercase">
+            <span className="hidden lg:block font-inter text-xs font-semibold tracking-[0.2em] uppercase">
               FAMILY PORTFOLIO
             </span>
             <button 

@@ -75,8 +75,8 @@ const AchievementBadges = () => {
   return (
     <section className="py-16 md:py-24 px-4 md:px-8 bg-dark relative z-20">
       <div className="max-w-6xl mx-auto">
-        <h2 className="font-anton text-[clamp(1.5rem,5vw,4rem)] text-cream text-center mb-12 md:mb-16 tracking-tight">ACHIEVEMENT WALL</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <h2 className="font-anton text-[clamp(1.5rem,5vw,4rem)] text-cream text-center mb-8 md:mb-16 tracking-tight">ACHIEVEMENT WALL</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {badges.map((badge, i) => (
             <motion.div
               key={i}

@@ -29,13 +29,13 @@ const Timeline = () => {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className={`relative flex flex-col md:flex-row items-start md:items-center mb-12 md:mb-16 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+              className={`relative flex flex-col md:flex-row items-start md:items-center mb-10 md:mb-16 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
             >
               {/* Content */}
               <div className={`w-full md:w-5/12 pl-12 md:pl-0 ${i % 2 === 0 ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'}`}>
-                <span className="font-anton text-4xl md:text-5xl" style={{ color: item.accent }}>{item.year}</span>
-                <h4 className="font-anton text-lg md:text-xl mt-1 md:mt-2 text-dark uppercase tracking-tight">{item.title}</h4>
-                <p className="font-inter text-dark/60 text-xs md:text-sm mt-1 md:mt-2 max-w-sm md:max-w-none ml-0 md:ml-auto">{item.desc}</p>
+                <span className="font-anton text-3xl md:text-5xl" style={{ color: item.accent }}>{item.year}</span>
+                <h4 className="font-anton text-base md:text-xl mt-1 md:mt-2 text-dark uppercase tracking-tight leading-tight">{item.title}</h4>
+                <p className="font-inter text-dark/70 text-[11px] md:text-sm mt-1 md:mt-2 max-w-xs md:max-w-none ml-0 md:ml-auto">{item.desc}</p>
               </div>
 
               {/* Center/Left dot */}
