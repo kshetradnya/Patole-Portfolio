@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AccentProvider } from './context/AccentContext';
 import Navbar from './components/layout/Navbar';
-import AnimatedHeading from './components/ui/AnimatedHeading';
-import FamilyOverview from './components/sections/FamilyOverview';
 import MemberSpotlight from './components/sections/MemberSpotlight';
 import GallerySection from './components/sections/GallerySection';
 import PhilosophySection from './components/sections/ContactSection';
@@ -15,20 +14,86 @@ import MarqueeText from './components/ui/MarqueeText';
 import NoiseOverlay from './components/effects/NoiseOverlay';
 import Preloader from './components/effects/Preloader';
 import CustomCursor from './components/effects/CustomCursor';
-import ScrollWatermark from './components/effects/ScrollWatermark';
 import ScrollProgressBar from './components/effects/ScrollProgressBar';
 import ScrollToTop from './components/effects/ScrollToTop';
 import SectionDots from './components/effects/SectionDots';
 import ParticleBackground from './components/effects/ParticleBackground';
 import KonamiEaster from './components/effects/KonamiEaster';
-import FamilyTreeSection from './components/sections/FamilyTreeSection';
+import VivekShowcase from './components/sections/VivekShowcase';
+import CreatorSection from './pages/CreatorPage';
 import { familyMembers } from './data/familyData';
-import { motion } from 'framer-motion';
 
+/* ── Word-swap animated tagline ──────────────────────── */
+const SWAP_WORDS = ['Builders', 'Thinkers', 'Leaders', 'Pioneers'];
+
+const WordSwap = () => {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setIdx(i => (i + 1) % SWAP_WORDS.length), 2400);
+    return () => clearInterval(t);
+  }, []);
+
+  return (
+    <span
+      className="relative inline-block overflow-hidden align-bottom"
+      style={{ height: 'clamp(2.2rem, 6vw, 5.5rem)' }}
+    >
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={idx}
+          initial={{ clipPath: 'inset(0 0 100% 0)', y: 20, opacity: 0 }}
+          animate={{ clipPath: 'inset(0 0 0% 0)', y: 0, opacity: 1 }}
+          exit={{ clipPath: 'inset(100% 0 0 0)', y: -20, opacity: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0 font-cormorant italic text-gold leading-none"
+          style={{ fontSize: 'clamp(2.2rem, 6vw, 5.5rem)' }}
+        >
+          {SWAP_WORDS[idx]}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+};
+
+/* ── Vivek floating badge ────────────────────────────── */
+const VivekHeroBadge = () => (
+  <motion.button
+    onClick={() => document.getElementById('vivek-showcase')?.scrollIntoView({ behavior: 'smooth' })}
+    initial={{ opacity: 0, x: 30 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay: 1.6, duration: 0.9 }}
+    whileHover={{ scale: 1.04 }}
+    className="group hidden lg:flex items-center gap-4 glass-gold rounded-2xl px-5 py-4 cursor-pointer"
+    style={{ border: '1px solid rgba(232,160,32,0.2)' }}
+  >
+    <div className="relative w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+      <img
+        src={`${import.meta.env.BASE_URL}vivek.png`}
+        alt="Vivek Patole"
+        className="w-full h-full object-cover object-top"
+      />
+    </div>
+    <div>
+      <p className="font-syne font-600 text-sm text-cream leading-tight">Vivek Patole</p>
+      <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-gold/70 mt-0.5">
+        VP · Tata Projects · Engineer
+      </p>
+    </div>
+    <div className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-gold">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 18l6-6-6-6" />
+      </svg>
+    </div>
+  </motion.button>
+);
+
+/* ── Main App ─────────────────────────────────────────── */
 function App() {
+  const vivek = familyMembers[0];
+
   return (
     <AccentProvider>
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-dark">
         <Preloader />
         <ScrollProgressBar />
         <CustomCursor />
@@ -39,106 +104,123 @@ function App() {
         <Navbar />
 
         <main>
-          {/* Hero Section with Particles */}
-          <section className="h-screen flex flex-col justify-center items-center relative overflow-hidden" id="home">
+          {/* ── HERO ───────────────────────────────────── */}
+          <section
+            id="home"
+            className="h-screen flex flex-col justify-center items-center relative overflow-hidden bg-dark"
+          >
             <ParticleBackground />
-            <div className="absolute inset-0 bg-cream -z-10 bg-topo opacity-10 pointer-events-none mix-blend-multiply"></div>
-            
-            {/* Scattered family names background */}
-            <div className="absolute inset-0 pointer-events-none select-none overflow-hidden z-0">
-              {['KSHETRADNYA', 'ANRUNYA', 'VIVEK', 'BHAVANA', 'PATOLE', 'KSHETRADNYA'].map((name, i) => (
-                <span
-                  key={i}
-                  className="absolute font-anton text-dark/[0.03] whitespace-nowrap hidden sm:block"
-                  style={{
-                    fontSize: `${Math.random() * 3 + 1.5}rem`,
-                    top: `${(i * 15) % 100}%`,
-                    left: `${((i * 37 + 13) % 100)}%`,
-                    transform: `rotate(${(i % 2 === 0 ? -1 : 1) * (5 + i * 3)}deg)`,
-                    letterSpacing: '0.15em',
-                  }}
+            <div className="absolute inset-0 blueprint-bg opacity-100 pointer-events-none" />
+            <div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] rounded-full pointer-events-none"
+              style={{ background: 'radial-gradient(ellipse, rgba(232,160,32,0.06) 0%, transparent 65%)' }}
+            />
+
+            <div className="relative z-10 flex flex-col items-center text-center px-6 max-w-6xl mx-auto w-full">
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="font-mono text-[10px] uppercase tracking-[0.4em] text-gold/55 mb-8"
+              >
+                VP · Central Engineering · Tata Projects Ltd
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+                className="flex flex-col items-center gap-2"
+              >
+                <h1 className="font-syne font-800 text-[clamp(3.5rem,14vw,12rem)] leading-[0.88] tracking-tight text-cream">
+                  VIVEK
+                </h1>
+                <h1 className="font-syne font-800 text-[clamp(3.5rem,14vw,12rem)] leading-[0.88] tracking-tight shimmer-gold">
+                  PATOLE
+                </h1>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1, duration: 0.9 }}
+                className="mt-6 flex items-center gap-3"
+                style={{ fontSize: 'clamp(1.1rem, 3vw, 2.2rem)' }}
+              >
+                <span className="font-inter text-cream/35">An Engineer of</span>
+                <WordSwap />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.4, duration: 0.9 }}
+                className="mt-12 flex flex-col sm:flex-row items-center gap-6"
+              >
+                <button
+                  onClick={() => document.getElementById('vivek-showcase')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="group flex items-center gap-3 px-7 py-3.5 rounded-full border border-gold/30 font-mono text-xs uppercase tracking-[0.2em] text-gold hover:bg-gold hover:text-dark transition-all duration-400"
                 >
-                  {name}
-                </span>
-              ))}
-              {/* Mobile version - fewer names */}
-              {['PATOLE', 'KSHETRADNYA', 'VIVEK'].map((name, i) => (
-                <span
-                  key={`mb-${i}`}
-                  className="absolute font-anton text-dark/[0.02] whitespace-nowrap sm:hidden"
-                  style={{
-                    fontSize: `2.5rem`,
-                    top: `${20 + (i * 25)}%`,
-                    left: `${(i * 10)}%`,
-                    transform: `rotate(-15deg)`,
-                    letterSpacing: '0.1em',
-                  }}
-                >
-                  {name}
-                </span>
-              ))}
+                  Explore the Journey
+                  <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5" className="group-hover:translate-y-0.5 transition-transform duration-300">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12l7 7 7-7" />
+                  </svg>
+                </button>
+                <VivekHeroBadge />
+              </motion.div>
             </div>
 
-            <AnimatedHeading text1="THE" text2="PATOLES" />
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1, duration: 1 }}
-              className="mt-8 text-center px-6 relative z-10"
+            {/* Scroll indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2, duration: 1 }}
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
             >
-              <p className="text-base md:text-xl font-inter text-dark/70 tracking-widest uppercase leading-loose">
-                A legacy of <span className="text-accent-italic text-accent lowercase text-xl md:text-2xl mx-1 transition-colors duration-500">excellence</span>
-              </p>
+              <span className="font-mono text-[9px] uppercase tracking-[0.3em] text-cream/20">Scroll</span>
+              <div className="w-px h-12 bg-gradient-to-b from-gold/40 to-transparent" />
             </motion.div>
           </section>
 
-          {/* Animated Number Stats */}
+          {/* ── STATS ──────────────────────────────────── */}
           <NumberCounter />
 
-          {/* Staggered Infinite Marquee Divider */}
+          {/* ── MARQUEE ────────────────────────────────── */}
           <div className="-mb-[2vw] relative z-30">
             <MarqueeText text="A JOURNEY OF EXCELLENCE" />
           </div>
 
-          {/* Family Overview Section */}
-          <FamilyOverview />
+          {/* ── VIVEK SHOWCASE ─────────────────────────── */}
+          <VivekShowcase />
 
-          {/* Member Spotlights */}
-          {familyMembers.map((member, index) => (
-            <MemberSpotlight 
-              key={member.id} 
-              member={member} 
-              isAlternate={index % 2 !== 0} 
-            />
-          ))}
+          {/* ── VIVEK SPOTLIGHT ────────────────────────── */}
+          <MemberSpotlight member={vivek} isAlternate={false} />
 
-          {/* Quotes Carousel */}
+          {/* ── QUOTES ─────────────────────────────────── */}
           <QuotesCarousel />
 
-          {/* Staggered Infinite Marquee Divider Reversed */}
+          {/* ── MARQUEE REVERSED ───────────────────────── */}
           <div className="my-[4vw]">
-            <MarqueeText text="BUILDING A LASTING LEGACY" reverse={true}/>
+            <MarqueeText text="BUILDING A LASTING LEGACY" reverse={true} />
           </div>
 
-          {/* Timeline */}
+          {/* ── TIMELINE ───────────────────────────────── */}
           <Timeline />
 
-          {/* Achievement Badges */}
+          {/* ── ACHIEVEMENT WALL ───────────────────────── */}
           <AchievementBadges />
 
-          {/* Lando Norris Style Horizontal Side Scrolling Section */}
+          {/* ── HORIZONTAL GALLERY ─────────────────────── */}
           <HorizontalGallery />
 
-          {/* Moments & Memories */}
+          {/* ── PHOTO GALLERY ──────────────────────────── */}
           <GallerySection />
 
-          {/* Majestic Pedigree Family Tree */}
-          <FamilyTreeSection />
+          {/* ── CREATOR SECTION (inline at bottom) ──────── */}
+          <CreatorSection />
 
-          {/* Core Philosophy Manifesto */}
+          {/* ── PHILOSOPHY / FOOTER ────────────────────── */}
           <PhilosophySection />
-          
         </main>
       </div>
     </AccentProvider>

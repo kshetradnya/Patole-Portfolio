@@ -3,8 +3,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const AccentContext = createContext();
 
 export const AccentProvider = ({ children }) => {
-  const [accent, setAccent] = useState('#00d4ff'); // Default Kshetradnya
-  const [accentDark, setAccentDark] = useState('#0066ff');
+  const [accent, setAccent] = useState('#E8A020'); // Default Vivek (Patriarch)
+  const [accentDark, setAccentDark] = useState('#C4841A');
   const [activeMember, setActiveMember] = useState(null);
 
   // Update CSS variables when accent changes
